@@ -1,6 +1,6 @@
 /**
  * @file main.c
- * @brief OpenSec - Versão final com cor amarela para NO PLEDGE
+ * @brief OpenSec - Versão final com emojis corrigidos
  */
 
 #include <stdio.h>
@@ -16,14 +16,14 @@
 #include "wx_monitor.h"
 
 /**
- * @brief Print program banner
+ * @brief Print program banner (alinhado com a tabela)
  */
 void print_banner(void) {
     printf("%s", COLOR_BOLD);
-    printf("================================================================================\n");
-    printf("                                   OpenSec                                      \n");
-    printf("                       OpenBSD Process Security Analyzer                       \n");
-    printf("================================================================================%s\n", COLOR_RESET);
+    printf("=============================================================================\n");
+    printf("                                 OpenSec                                    \n");
+    printf("                     OpenBSD Process Security Analyzer                     \n");
+    printf("=============================================================================%s\n", COLOR_RESET);
 }
 
 /**
@@ -39,7 +39,7 @@ void print_usage(void) {
 }
 
 /**
- * @brief Print process table com cor amarela para NO PLEDGE
+ * @brief Print process table com alinhamento perfeito
  */
 void print_process_table(ProcessInfo *procs, int count) {
     int pledged_count = 0;
@@ -52,18 +52,10 @@ void print_process_table(ProcessInfo *procs, int count) {
     printf("├────────┼──────────────────────────────┼────────────────────┼──────────────┤\n");
     
     for (int i = 0; i < count; i++) {
-        char pledge_status[19];
         char context[13];
-        
-        /* Determina status do pledge baseado na string */
-        if (strlen(procs[i].pledges) == 0 || 
-            strcmp(procs[i].pledges, "NO PLEDGE") == 0) {
-            strlcpy(pledge_status, "NO PLEDGE", sizeof(pledge_status));
-            no_pledge_count++;
-        } else {
-            strlcpy(pledge_status, "PLEDGED", sizeof(pledge_status));
-            pledged_count++;
-        }
+        const char *color_start = "";
+        const char *color_end = "";
+        const char *status_text;
         
         /* Determina contexto */
         if (procs[i].wxneeded) {
@@ -74,20 +66,30 @@ void print_process_table(ProcessInfo *procs, int count) {
             strlcpy(context, "NATIVE", sizeof(context));
         }
         
-        /* Aplica cor amarela apenas para NO PLEDGE */
-        if (strcmp(pledge_status, "NO PLEDGE") == 0) {
-            printf("│ %-6d │ %-28s │ %s%-18s%s │ %-12s │\n",
-                   procs[i].pid,
-                   procs[i].name,
-                   COLOR_WARNING, "NO PLEDGE", COLOR_RESET,
-                   context);
+        /* Determina status e cor */
+        if (!procs[i].has_pledge || 
+            strlen(procs[i].pledges) == 0 || 
+            strcmp(procs[i].pledges, "NO PLEDGE") == 0) {
+            
+            status_text = "NO PLEDGE";
+            color_start = COLOR_WARNING;
+            color_end = COLOR_RESET;
+            no_pledge_count++;
         } else {
-            printf("│ %-6d │ %-28s │ %-18s │ %-12s │\n",
-                   procs[i].pid,
-                   procs[i].name,
-                   pledge_status,
-                   context);
+            status_text = "PLEDGED";
+            color_start = "";
+            color_end = "";
+            pledged_count++;
         }
+        
+        /* Imprime com cor separada do texto para manter alinhamento */
+        printf("│ %-6d │ %-28s │ %s%-18s%s │ %-12s │\n",
+               procs[i].pid,
+               procs[i].name,
+               color_start,
+               status_text,
+               color_end,
+               context);
         
         /* Linha separadora a cada 20 processos */
         if ((i + 1) % 20 == 0 && i < count - 1) {
@@ -96,7 +98,7 @@ void print_process_table(ProcessInfo *procs, int count) {
     }
     
     printf("└────────┴──────────────────────────────┴────────────────────┴──────────────┘\n");
-    printf("\n[+] Scan complete. Total: %d | 🔒 Pledged: %d | ⚠️  No Pledge: %d\n",
+    printf("\n[+] Scan complete. 📊 Total: %d | 🔒 Pledged: %d | ⚠️  No Pledge: %d\n",
            count, pledged_count, no_pledge_count);
 }
 
@@ -126,8 +128,7 @@ int run_audit(void) {
     stats.chrooted_processes = 0;
     
     for (int i = 0; i < count; i++) {
-        if (strlen(processes[i].pledges) > 0 && 
-            strcmp(processes[i].pledges, "NO PLEDGE") != 0) {
+        if (processes[i].has_pledge) {
             stats.pledged_processes++;
         }
         if (processes[i].wxneeded) stats.wxneeded_processes++;
