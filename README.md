@@ -1,4 +1,4 @@
-# OpenSec: OpenBSD Process Security Auditor
+# OpenSec - OpenBSD Process Security Auditor
 
 **OpenSec** is a low-level forensic tool designed to audit security mitigations on **OpenBSD**. Instead of just listing processes, it queries the kernel to verify if running binaries are actually leveraging OpenBSD’s native exploit mitigations like `pledge(2)`, `unveil(2)`, and `W^X`.
 
@@ -20,7 +20,7 @@ The **v1.1 update** focused on UI precision and logic robustness, ensuring the a
 
 ---
 
-## 🖼️ Screenshots
+## 🖼️  Screenshots
 
 <p align="center">
   <img src="Imagens/opensec1.png" width="800" alt="OpenSec Initial Scan">
