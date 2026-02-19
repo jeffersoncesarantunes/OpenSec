@@ -20,29 +20,25 @@ The **v1.1 update** focused on UI precision and logic robustness, ensuring the a
 
 ---
 
-## 🖼️  Screenshots
+## 🖼️ Screenshots
 
 <p align="center">
-  <img src="Imagens/opensec1.png" width="700" alt="OpenSec Header">
+  <img src="Imagens/opensec1.png" width="800" alt="OpenSec Initial Scan">
   <br>
-  <i>1. Initial scan: Proper column alignment and process identification.</i>
+  <i>1. Initial System Scan: Detection of userland processes and evaluation of baseline security posture.</i>
 </p>
 
-<details>
-  <summary>📂 <b>View Full Audit and Summary</b></summary>
+<p align="center">
+  <img src="Imagens/opensec2.png" width="800" alt="Mitigation Analysis">
   <br>
-  <p align="center">
-    <img src="Imagens/opensec2.png" width="700" alt="Audit Table">
-    <br>
-    <i>2. Multi-process audit: Observing Firefox's sandboxing architecture where content processes are pledged while the parent remains open.</i>
-  </p>
-  <hr>
-  <p align="center">
-    <img src="Imagens/opensec3.png" width="700" alt="Security Summary">
-    <br>
-    <i>3. Final verdict: Global W^X status and Pledge adoption statistics.</i>
-  </p>
-</details>
+  <i>2. Mitigation Analysis: Real-time monitoring of system daemons leveraging active Pledge and Unveil security primitives.</i>
+</p>
+
+<p align="center">
+  <img src="Imagens/opensec3.png" width="800" alt="Security Summary">
+  <br>
+  <i>3. Forensic Summary: Final security audit reporting W^X enforcement and global mitigation statistics.</i>
+</p>
 
 ---
 
