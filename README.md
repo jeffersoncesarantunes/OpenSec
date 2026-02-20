@@ -59,7 +59,7 @@ When OpenSec flags a critical process with **NONE** status, use native OpenBSD t
 ### Build & Run
 ```bash
 # Clone the repository
-git clone [https://github.com/jeffersoncesarantunes/OpenSec.git](https://github.com/jeffersoncesarantunes/OpenSec.git)
+git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 
 # Compile and execute
