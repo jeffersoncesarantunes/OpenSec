@@ -1,70 +1,92 @@
-# 🛰️  OpenSec | OpenBSD Process Security Auditor
+cat << 'EOF' > README.md
+# 🛰️ OpenSec | Advanced OpenBSD Security Mitigation Auditor
 
-**OpenSec** is a low-level forensic tool designed to audit security mitigations on **OpenBSD**. It queries the kernel to verify if running binaries are leveraging native exploit mitigations like `pledge(2)`, `unveil(2)`, and `W^X`.
+High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^X** enforcement. Validate your system hardening in real-time.
 
-## 🛡️ Why it exists
-OpenSec acts as a security posture validator, identifying "naked" processes—those running without sandboxing in an otherwise hardened environment.
-
-* **Pledge(2):** Validates syscall restriction. Processes labeled `NONE` have full kernel surface access.
-* **Unveil(2):** Checks filesystem visibility. Identifies if a process can "see" the entire OS.
-* **W^X:** Monitors enforcement of memory policies where pages cannot be both writable and executable.
+![License](https://img.shields.io/badge/license-MIT-green) ![Platform](https://img.shields.io/badge/platform-OpenBSD-yellow) ![Language](https://img.shields.io/badge/language-C-blue)
 
 ---
 
-## 🔍 Security Audit in Action
-* **GREEN (ACTIVE):** Mitigation is strictly enforced.
-* **RED (NONE):** No mitigation detected (increased attack surface).
-* **Context Awareness:** Automatically distinguishes between **NATIVE** userland processes and **KERNEL** threads.
+## 🔍 Overview
+
+**OpenSec** is a specialized security auditor designed for the OpenBSD ecosystem. It interfaces directly with the kernel via `kvm(3)` to monitor the security posture of active processes, pinpointing "naked" binaries that fail to leverage OpenBSD’s native exploit mitigations.
+
+### 🛡️ Core Pillars
+* **Kernel-Level Insight:** Leverages `libkvm` to query process structures (`struct kinfo_proc`) with surgical accuracy.
+* **Sandboxing Validation:** Monitors the state of `pledge(2)` (syscall filtering) and `unveil(2)` (filesystem visibility).
+* **Security Posture Triage:** Instantly distinguishes between hardened userland applications and essential kernel threads.
 
 ---
 
-## 🖼️ Screenshots
+## 📸 Project in Action
 
-<p align="center">
-  <img src="Imagens/opensec1.png" width="800" alt="OpenSec Initial Scan">
-  <br>
-  <i>1. Initial System Scan: Evaluation of baseline security posture.</i>
-</p>
+![Initial Scan](./Imagens/opensec1.png)
+*Figure 1: Automated baseline evaluation of the global security posture.*
 
-<p align="center">
-  <img src="Imagens/opensec2.png" width="800" alt="Mitigation Analysis">
-  <br>
-  <i>2. Mitigation Analysis: Monitoring active Pledge and Unveil security primitives.</i>
-</p>
+![Mitigation Analysis](./Imagens/opensec2.png)
+*Figure 2: Real-time monitoring of active security primitives and privilege levels.*
 
-<p align="center">
-  <img src="Imagens/opensec3.png" width="800" alt="Security Summary">
-  <br>
-  <i>3. Forensic Summary: Final audit reporting and global mitigation statistics.</i>
-</p>
+![Forensic Summary](./Imagens/opensec3.png)
+*Figure 3: Forensic audit reporting with global mitigation statistics and risk assessment.*
 
 ---
 
-## 🚀 Build & Run
-OpenSec interfaces with the kernel via `kvm(3)`, therefore it requires elevated privileges.
+## ✨ Key Capabilities
 
+### 🛡️ Mitigation Auditing
+Continuous monitoring of exploit prevention policies across all PIDs:
+* **🟢 GREEN (ACTIVE):** Mitigation is strictly enforced (Pledged/Unveiled).
+* **🔴 RED (NONE):** No mitigation detected (Increased attack surface).
+
+### ⚙️ Operational Integrity
+OpenSec is built for systems where security and stability are inseparable:
+* **Passive Observation:** Unlike intrusive debuggers, OpenSec reads kernel state without interrupting process execution.
+* **Architectural Precision:** Built specifically for OpenBSD’s memory model and security paradigms.
+
+### 🛠️ Investigation Workflow
+When OpenSec flags a critical process with **NONE** status, use native OpenBSD tools for deep analysis:
+* **Syscall Audit:** `ktrace -p [PID] && kdump` (Analyze missing pledge(2) calls).
+* **File Access:** `fstat -p [PID]` (Check descriptors accessed outside of an unveil(2) scope).
+* **Memory Flags:** `vmstat -m` (Inspect global memory allocation patterns).
+
+---
+
+## 🚀 Deployment
+
+### Prerequisites
+* **OS:** OpenBSD (Current/Stable)
+* **Privileges:** Access to `/dev/mem` (requires `doas` or `root`)
+
+### Build & Run
 ```bash
-# Build
-make clean && make
+# Clone the repository
+git clone [https://github.com/jeffersoncesarantunes/OpenSec.git](https://github.com/jeffersoncesarantunes/OpenSec.git)
+cd OpenSec
 
-# Execute
+# Compile and execute
+make clean && make
 doas ./bin/opensec
 ```
+## 🛠️ Tech Stack
 
-## 🕵️ Investigation Workflow
-If OpenSec flags a critical process with **NONE** status, investigate using OpenBSD’s native trace tools:
+| Component | Technology |
+| :--- | :--- |
+| **Language** | C (OpenBSD C Style) |
+| **Interface** | libkvm (Kernel Data Access Library) |
+| **Build Tool** | BSD Make |
+| **Security Focus** | Pledge / Unveil / W^X |
 
-* **Syscall Audit:** Run `ktrace -p [PID]` followed by `kdump` to analyze missing pledge(2) calls.
-* **Filesystem Access:** Use `fstat -p [PID]` to check files accessed outside of an unveil(2) scope.
+## 🗺️ Roadmap
+
+- [x] Kernel-level mitigation detection engine
+- [x] Process-type differentiation (Native vs Kernel)
+- [ ] Structured export (CSV/JSON) for compliance reporting
+- [ ] Interactive TUI for real-time process monitoring
+- [ ] Per-process mitigation history logging
+
+## 📄 License
+
+Distributed under the **MIT License**. Built for the security-conscious OpenBSD community.
 
 ---
-
-## 🛠 Project Architecture
-* `src/`: Implementation of KVM kernel queries and security logic.
-* `include/`: Header files for mitigation state definitions.
-* `bin/`: Output directory for the compiled forensic binary.
-
----
-
-## ⚖️ License
-MIT License. Built for the OpenBSD security community.
+*Because in OpenBSD, we don't just trust—we verify.*
