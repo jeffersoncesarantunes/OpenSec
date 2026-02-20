@@ -1,4 +1,3 @@
-cat << 'EOF' > README.md
 # 🛰️ OpenSec | Advanced OpenBSD Security Mitigation Auditor
 
 High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^X** enforcement. Validate your system hardening in real-time.
