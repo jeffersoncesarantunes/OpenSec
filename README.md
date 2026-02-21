@@ -1,4 +1,4 @@
-# 🛰️ OpenSec | Advanced OpenBSD Security Mitigation Auditor
+# 🛰️  OpenSec | Advanced OpenBSD Security Mitigation Auditor
 
 High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^X** enforcement. Validate your system hardening in real-time.
 
@@ -31,13 +31,20 @@ High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^
 ---
 
 ## ✨ Key Capabilities
+OpenSec provides a robust suite of auditing features designed to expose security gaps in the running system.
 
-### 🛡️  Mitigation Auditing
-Continuous monitoring of exploit prevention policies across all PIDs:
-* **🟢 GREEN (ACTIVE):** Mitigation is strictly enforced (Pledged/Unveiled).
-* **🔴 RED (NONE):** No mitigation detected (Increased attack surface).
+### 🔬 Mitigation Auditing & Context Tracking
+Continuous monitoring of exploit prevention policies and process nature across all PIDs.
 
-### ⚙️ Operational Integrity
+#### Color Legend (Standard Interpretation):
+* **🟢 GREEN (ACTIVE):** Mitigation is strictly enforced by the kernel (Pledged/Unveiled).
+* **🔴 RED (NONE):** No mitigation detected (Critical attack surface).
+* **🔵 BLUE / 🟣 PURPLE (NATIVE):** Standard userland process context.
+* **🟣 PURPLE / 💗 PINK (KERNEL):** Core system entity or kernel thread (e.g., PID 1 `init`).
+
+> **🎨 Developer Note:** During validation on **Kitty** and **xfce4-terminal**, we observed that color shades vary (e.g., Pink vs Magenta) based on the terminal's ANSI palette. See [SECURITY_MODEL.md](./docs/SECURITY_MODEL.md) for details.
+
+### ⚙️  Operational Integrity
 OpenSec is built for systems where security and stability are inseparable:
 * **Passive Observation:** Unlike intrusive debuggers, OpenSec reads kernel state without interrupting process execution.
 * **Architectural Precision:** Built specifically for OpenBSD’s memory model and security paradigms.
@@ -70,7 +77,7 @@ doas ./bin/opensec
 
 | Component | Technology |
 | :--- | :--- |
-| **Language** | C (OpenBSD C Style) |
+| **Language** | C (C99/C11) with OpenBSD Extensions |
 | **Interface** | libkvm (Kernel Data Access Library) |
 | **Build Tool** | BSD Make |
 | **Security Focus** | Pledge / Unveil / W^X |

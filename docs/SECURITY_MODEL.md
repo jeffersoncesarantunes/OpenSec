@@ -1,4 +1,4 @@
-# 🛡️  Technical Specification: Security Model & Forensic Workflow
+# 🛡️ Technical Specification: Security Model & Forensic Workflow
 
 This document details the architectural logic of OpenSec and provides a formal guide on how to interpret and act upon the results using native OpenBSD forensic tools.
 
@@ -13,11 +13,18 @@ A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Bina
 
 ---
 
-## 2. Kernel Telemetry via libkvm
+## 2. Kernel Telemetry & Visual Representation
 
+### 2.1 Technical Data Source
 * **Mechanism:** Direct inspection of `struct kinfo_proc` via `libkvm(3)`.
 * **Data Integrity:** Bypasses text-based process lists to avoid TOCTOU vulnerabilities.
-* **Filter Logic:** Excludes kernel threads to focus on the userland attack surface.
+
+### 2.2 UI Chromatic Logic (ANSI Escape Codes)
+OpenSec uses standard ANSI sequences to categorize process states. **Note on Environment Variability:**
+During development and validation, tests were conducted on **Kitty** and **xfce4-terminal**. It was observed that:
+* **Userland (NATIVE):** May appear as **Purple** (Kitty/Modern) or **Blue** (Xfce4/Classic).
+* **System (KERNEL):** May appear as **Pink** (Kitty) or **Magenta** (Xfce4).
+* **Mitigations:** Green (Active) and Red (None) remain consistent across most themes.
 
 ---
 
@@ -33,9 +40,6 @@ A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Bina
 * **Action:** `doas fstat -p [PID]` and `kdump | grep "NAMI"`.
 * **Objective:** Identify unauthorized filesystem probing.
 
-### Step 3: Memory Integrity
-* **Action:** `doas procmap [PID]` to detect W^X violations.
-
 ---
 
 ## 4. Operational Safety & Resolution
@@ -45,5 +49,4 @@ When prompted during an audit, selecting **Option 3 (Ignore)** is the recommende
 
 ### 4.2 Hardening Hierarchy
 1. **Code Patching:** Implement `pledge()` and `unveil()` based on gathered data.
-2. **Isolation:** Use `chroot(8)` or `login.conf(5)` for legacy binaries.
-3. **Verification:** Rerun OpenSec to confirm **🟢 ACTIVE** status.
+2. **Verification:** Rerun OpenSec to confirm **ACTIVE** status.
