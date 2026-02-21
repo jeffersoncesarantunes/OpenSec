@@ -1,6 +1,8 @@
-# 🛰️  OpenSec | Advanced OpenBSD Security Mitigation Auditor
+# 🛰️  OpenSec | Process mitigation auditing tool for OpenBSD.
 
-High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^X** enforcement. Validate your system hardening in real-time.
+OpenSec is an experimental auditing tool for OpenBSD that inspects process state via kvm(3) and struct kinfo_proc to determine whether pledge(2), unveil(2), and W^X protections are active.
+
+It is intended for study, inspection, and system hardening analysis.
 
 ![License](https://img.shields.io/badge/license-MIT-green) ![Platform](https://img.shields.io/badge/platform-OpenBSD-yellow) ![Language](https://img.shields.io/badge/language-C-blue)
 
@@ -8,12 +10,37 @@ High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^
 
 ## 🔍 Overview
 
-**OpenSec** is a specialized security auditor designed for the OpenBSD ecosystem. It interfaces directly with the kernel via `kvm(3)` to monitor the security posture of active processes, pinpointing "naked" binaries that fail to leverage OpenBSD’s native exploit mitigations.
+OpenSec reports mitigation state of running processes on OpenBSD by inspecting kernel-exposed metadata.
 
-### 🛡️  Core Pillars
-* **Kernel-Level Insight:** Leverages `libkvm` to query process structures (`struct kinfo_proc`) with surgical accuracy.
-* **Sandboxing Validation:** Monitors the state of `pledge(2)` (syscall filtering) and `unveil(2)` (filesystem visibility).
-* **Security Posture Triage:** Instantly distinguishes between hardened userland applications and essential kernel threads.
+## 🔧 How It Works
+
+OpenSec uses libkvm to read kernel process tables and evaluate fields within struct kinfo_proc. The tool does not modify kernel memory and operates strictly in read-only mode.
+
+The tool evaluates:
+
+- Whether pledge(2) restrictions are active
+- Whether unveil(2) restrictions are present
+- Indicators related to W^X enforcement
+
+Classification is based exclusively on kernel-exposed state.
+No syscall tracing, binary instrumentation, or static analysis is performed.
+
+## 🧠 Design Philosophy
+
+OpenSec adheres to a strict non-intrusive inspection model:
+
+- No runtime instrumentation
+- No binary rewriting
+- No ptrace attachment
+- Read-only kernel state inspection
+
+The objective is deterministic classification based solely on kernel state.
+
+## ⚠️  Limitations
+
+- Relies exclusively on kernel-exposed metadata
+- Does not infer intent or runtime behavior
+- Cannot detect logic flaws inside pledged binaries
 
 ---
 
@@ -30,11 +57,12 @@ High-precision forensic tool for auditing **pledge(2)**, **unveil(2)**, and **W^
 
 ---
 
-## ✨ Key Capabilities
-OpenSec provides a robust suite of auditing features designed to expose security gaps in the running system.
+## 🧩 Features
 
-### 🔬 Mitigation Auditing & Context Tracking
-Continuous monitoring of exploit prevention policies and process nature across all PIDs.
+- Kernel process table inspection via libkvm
+- pledge(2) and unveil(2) state reporting
+- W^X-related enforcement indicators
+- Userland vs kernel process differentiation
 
 #### Color Legend (Standard Interpretation):
 * **🟢 GREEN (ACTIVE):** Mitigation is strictly enforced by the kernel (Pledged/Unveiled).
@@ -47,9 +75,9 @@ Continuous monitoring of exploit prevention policies and process nature across a
 ### ⚙️  Operational Integrity
 OpenSec is built for systems where security and stability are inseparable:
 * **Passive Observation:** Unlike intrusive debuggers, OpenSec reads kernel state without interrupting process execution.
-* **Architectural Precision:** Built specifically for OpenBSD’s memory model and security paradigms.
+* **Architectural Precision:** Designed specifically for OpenBSD’s process and memory model.
 
-### 🛠️  Investigation Workflow
+### 🕵️  Investigation Workflow
 When OpenSec flags a critical process with **NONE** status, use native OpenBSD tools for deep analysis:
 * **Syscall Audit:** `ktrace -p [PID] && kdump` (Analyze missing pledge(2) calls).
 * **File Access:** `fstat -p [PID]` (Check descriptors accessed outside of an unveil(2) scope).
@@ -57,7 +85,7 @@ When OpenSec flags a critical process with **NONE** status, use native OpenBSD t
 
 ---
 
-## 🚀 Deployment
+## 📦 Deployment
 
 ### Prerequisites
 * **OS:** OpenBSD (Current/Stable)
