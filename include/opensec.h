@@ -1,28 +1,30 @@
 #ifndef OPENSEC_H
 #define OPENSEC_H
 
-#include "colors.h"
-#include "process_core.h"
-#include "pledge_analyzer.h"
-#include "wx_monitor.h"
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#include <kvm.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define OPENSEC_VERSION "1.0.0"
-#define MAX_LINE_LEN 1024
-#define DEFAULT_REFRESH 2
+typedef struct {
+    pid_t pid;
+    char name[64];
+    int has_pledge;
+    int has_unveil;
+    int wxneeded;
+    int chrooted;
+} ProcessInfo;
 
-/* Banner and usage */
-void print_banner(void);
-void print_usage(void);
+typedef struct {
+    int pledged_processes;
+    int unveiled_processes;
+    int wxneeded_processes;
+    int chrooted_processes;
+} SystemStats;
 
-/* Core scanning functions */
-ProcessInfo *get_all_processes(int *count);  /* ADICIONADO */
-int scan_all_processes(SystemStats *stats);
-
-/* Display functions */
-void print_process_table(ProcessInfo *processes, int count);
-void truncate_string(const char *src, char *dest, size_t max_len);
-
-/* Memory management */
-void free_processes(ProcessInfo *processes, int count);
+ProcessInfo* get_all_processes(int *count);
 
 #endif
