@@ -73,7 +73,7 @@ cd OpenSec
 make clean && make
 doas ./bin/opensec
 ```
-## 🛠️  Tech Stack
+## 💻 Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
