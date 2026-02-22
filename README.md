@@ -75,6 +75,19 @@ Output reflects kernel-reported mitigation state only.
 
 ---
 
+## ● Project in Action
+
+![Initial Scan](./Imagens/opensec1.png)
+*Figure 1: Automated baseline evaluation of the global security posture.*
+
+![Mitigation Analysis](./Imagens/opensec2.png)
+*Figure 2: Real-time monitoring of active security primitives and privilege levels.*
+
+![Forensic Summary](./Imagens/opensec3.png)
+*Figure 3: Forensic audit reporting with global mitigation statistics and risk assessment.*
+
+---
+
 ## ● Design Philosophy
 
 OpenSec follows OpenBSD principles:
