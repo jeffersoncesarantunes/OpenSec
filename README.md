@@ -1,4 +1,5 @@
 # 🐡 OpenSec
+
 A lightweight process mitigation auditing tool for OpenBSD.
 
 ---
@@ -7,11 +8,11 @@ A lightweight process mitigation auditing tool for OpenBSD.
 
 OpenSec is a minimal auditing utility designed specifically for OpenBSD systems.
 
-It inspects kernel-exposed process metadata via kvm(3) and struct kinfo_proc
+It inspects kernel-exposed process metadata via `kvm(3)` and `struct kinfo_proc`
 to determine whether core mitigation mechanisms are active, including:
 
-- pledge(2)
-- unveil(2)
+- `pledge(2)`
+- `unveil(2)`
 - W^X enforcement indicators
 
 The objective is deterministic classification of process security posture
@@ -39,20 +40,20 @@ It focuses purely on observable kernel state.
 
 ## ● How It Works
 
-OpenSec interfaces with libkvm to access the kernel process table in read-only mode.
+OpenSec interfaces with `libkvm` to access the kernel process table in read-only mode.
 
-For each process entry, it evaluates fields within struct kinfo_proc
+For each process entry, it evaluates fields within `struct kinfo_proc`
 and related metadata to determine:
 
-- Whether pledge(2) restrictions are enforced
-- Whether unveil(2) restrictions are present
+- Whether `pledge(2)` restrictions are enforced
+- Whether `unveil(2)` restrictions are present
 - Whether memory protection flags align with W^X principles
 
 Classification is derived exclusively from kernel-reported state.
 
-The tool does not:
+The tool does **not**:
 
-- Attach via ptrace
+- Attach via `ptrace`
 - Instrument binaries
 - Modify process memory
 - Inject runtime code
@@ -63,10 +64,12 @@ All inspection is passive and non-intrusive.
 
 ## ● Example Output
 
-PID   USER    PLEDGE   UNVEIL   W^X   CLASSIFICATION
-123   root    YES      YES      OK    Hardened
-456   www     YES      NO       OK    Partial
-789   user    NO       NO       WEAK  Unrestricted
+```
+PID   USER   PLEDGE   UNVEIL   W^X   CLASSIFICATION
+123   root   YES      YES      OK    Hardened
+456   www    YES      NO       OK    Partial
+789   user   NO       NO       WEAK  Unrestricted
+```
 
 Output reflects kernel-reported mitigation state only.
 
@@ -76,10 +79,10 @@ Output reflects kernel-reported mitigation state only.
 
 OpenSec follows OpenBSD principles:
 
-1. Simplicity
-2. Correctness
-3. Determinism
-4. Non-Intrusiveness
+- Simplicity
+- Correctness
+- Determinism
+- Non-Intrusiveness
 
 The tool is intentionally conservative in scope.
 
@@ -89,13 +92,11 @@ The tool is intentionally conservative in scope.
 
 Additional technical documentation is available:
 
-- **Security Model & Forensic Workflow**  
-  Detailed architectural description, trust model, telemetry logic, and post-audit investigation procedures.  
-  → `docs/SECURITY_MODEL.md`
+- **[Security Model & Forensic Workflow](docs/SECURITY_MODEL.md)**  
+  Detailed architectural description, trust model, telemetry logic, and post-audit investigation procedures.
 
-- **Performance Benchmarks & Operational Impact**  
-  Empirical measurements of CPU, memory footprint, latency, and scalability behavior under load.  
-  → `docs/BENCHMARKS.md`
+- **[Performance Benchmarks & Operational Impact](docs/BENCHMARKS.md)**  
+  Empirical measurements of CPU usage, memory footprint, latency, and scalability behavior under load.
 
 These documents formalize OpenSec’s architectural assumptions,
 operational safety guarantees, and performance characteristics.
@@ -116,22 +117,22 @@ Mitigation absence does not automatically imply malicious behavior.
 
 ## ● Project in Action
 
-![Initial Scan](./Imagens/opensec1.png)
-Figure 1: Automated baseline evaluation of the global security posture.
+- **Initial Scan**  
+  Automated baseline evaluation of the global security posture.
 
-![Mitigation Analysis](./Imagens/opensec2.png)
-Figure 2: Real-time monitoring of active security primitives and privilege levels.
+- **Mitigation Analysis**  
+  Real-time monitoring of active security primitives and privilege levels.
 
-![Forensic Summary](./Imagens/opensec3.png)
-Figure 3: Forensic audit reporting with global mitigation statistics and risk assessment.
+- **Forensic Summary**  
+  Forensic audit reporting with global mitigation statistics and risk assessment.
 
 ---
 
 ## ● Features
 
-- Kernel process table inspection via libkvm
-- pledge(2) enforcement detection
-- unveil(2) state reporting
+- Kernel process table inspection via `libkvm`
+- `pledge(2)` enforcement detection
+- `unveil(2)` state reporting
 - W^X-related enforcement indicators
 - Userland vs kernel process differentiation
 - Deterministic classification model
@@ -155,17 +156,11 @@ Suitable for live auditing and hardening validation.
 
 ## ● Investigation Workflow
 
-If a process is classified without active mitigations,
-further analysis may include:
+If a process is classified without active mitigations, further analysis may include:
 
-Syscall auditing:
-ktrace -p [PID] && kdump
-
-File descriptor inspection:
-fstat -p [PID]
-
-Binary verification:
-sha256 /path/to/binary
+- Syscall auditing: `ktrace -p [PID] && kdump`
+- File descriptor inspection: `fstat -p [PID]`
+- Binary verification: `sha256 /path/to/binary`
 
 OpenSec serves as an initial mitigation visibility layer
 within a broader forensic workflow.
@@ -174,14 +169,14 @@ within a broader forensic workflow.
 
 ## ● Deployment
 
-Requirements:
+### Requirements
 
 - OpenBSD (stable or current)
-- libkvm
-- BSD make
-- doas or root privileges
+- `libkvm`
+- BSD `make`
+- `doas` or root privileges
 
-Build and execute:
+### Build and Execute
 
 ```bash
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
@@ -194,11 +189,11 @@ doas ./bin/opensec
 
 ## ● Tech Stack
 
-Language: C (C99/C11 with OpenBSD extensions)
-Kernel Interface: libkvm
-Data Source: struct kinfo_proc
-Build Tool: BSD make
-Target Platform: OpenBSD
+- **Language:** C (C99/C11 with OpenBSD extensions)
+- **Kernel Interface:** `libkvm`
+- **Data Source:** `struct kinfo_proc`
+- **Build Tool:** BSD `make`
+- **Target Platform:** OpenBSD
 
 ---
 
@@ -215,8 +210,9 @@ Target Platform: OpenBSD
 
 ## ● License
 
-Distributed under the MIT License.
-See LICENSE file for details.
+Distributed under the MIT License.  
+See the `LICENSE` file for details.
 
-Developed as a practical exploration of OpenBSD process
-mitigation visibility and kernel state auditing.
+Developed as a practical exploration of OpenBSD process mitigation visibility
+and kernel state auditing.
+
