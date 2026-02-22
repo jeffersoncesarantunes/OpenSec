@@ -1,9 +1,9 @@
-# OpenSec
+# ● OpenSec
 A lightweight process mitigation auditing tool for OpenBSD.
 
 ---
 
-## Overview
+## ● Overview
 
 OpenSec is a minimal auditing utility designed specifically for OpenBSD systems.
 
@@ -21,7 +21,7 @@ OpenSec does not perform tracing, instrumentation, or behavioral inference.
 
 ---
 
-## Why
+## ● Why
 
 OpenBSD provides strong built-in mitigation primitives.
 However, visibility into which processes actively enforce them is not centralized.
@@ -37,7 +37,7 @@ It focuses purely on observable kernel state.
 
 ---
 
-## How It Works
+## ● How It Works
 
 OpenSec interfaces with libkvm to access the kernel process table in read-only mode.
 
@@ -61,7 +61,7 @@ All inspection is passive and non-intrusive.
 
 ---
 
-## Example Output
+## ● Example Output
 
 PID   USER    PLEDGE   UNVEIL   W^X   CLASSIFICATION
 123   root    YES      YES      OK    Hardened
@@ -72,7 +72,7 @@ Output reflects kernel-reported mitigation state only.
 
 ---
 
-## Design Philosophy
+## ● Design Philosophy
 
 OpenSec follows OpenBSD principles:
 
@@ -85,7 +85,7 @@ The tool is intentionally conservative in scope.
 
 ---
 
-## Limitations
+## ● Limitations
 
 - Relies strictly on kernel-exposed metadata
 - Does not analyze binary logic or runtime intent
@@ -97,7 +97,7 @@ Mitigation absence does not automatically imply malicious behavior.
 
 ---
 
-## Project in Action
+## ● Project in Action
 
 ![Initial Scan](./Imagens/opensec1.png)
 Figure 1: Automated baseline evaluation of the global security posture.
@@ -110,7 +110,7 @@ Figure 3: Forensic audit reporting with global mitigation statistics and risk as
 
 ---
 
-## Features
+## ● Features
 
 - Kernel process table inspection via libkvm
 - pledge(2) enforcement detection
@@ -123,7 +123,7 @@ Figure 3: Forensic audit reporting with global mitigation statistics and risk as
 
 ---
 
-## Operational Integrity
+## ● Operational Integrity
 
 OpenSec is designed for stability in live OpenBSD environments:
 
@@ -136,7 +136,7 @@ Suitable for live auditing and hardening validation.
 
 ---
 
-## Investigation Workflow
+## ● Investigation Workflow
 
 If a process is classified without active mitigations,
 further analysis may include:
@@ -155,7 +155,7 @@ within a broader forensic workflow.
 
 ---
 
-## Deployment
+## ● Deployment
 
 Requirements:
 
@@ -166,14 +166,16 @@ Requirements:
 
 Build and execute:
 
+```bash
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 make clean && make
 doas ./bin/opensec
+```
 
 ---
 
-## Tech Stack
+## ● Tech Stack
 
 Language: C (C99/C11 with OpenBSD extensions)
 Kernel Interface: libkvm
@@ -183,7 +185,7 @@ Target Platform: OpenBSD
 
 ---
 
-## Roadmap
+## ● Roadmap
 
 - Kernel-level mitigation detection engine (Completed)
 - Process-type differentiation (Completed)
@@ -194,7 +196,7 @@ Target Platform: OpenBSD
 
 ---
 
-## License
+## ● License
 
 Distributed under the MIT License.
 See LICENSE file for details.
