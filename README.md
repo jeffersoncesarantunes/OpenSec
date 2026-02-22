@@ -210,14 +210,16 @@ doas ./bin/opensec
 
 ---
 
+---
+
 ## ● Roadmap
 
-- Kernel-level mitigation detection engine (Completed)
-- Process-type differentiation (Completed)
-- Structured export format (CSV/JSON)
-- Interactive TUI interface
-- Historical mitigation state tracking
-- Extended W^X validation research
+- [x] Kernel-level mitigation detection engine
+- [x] Process-type differentiation
+- [ ] Structured export format (CSV/JSON)
+- [ ] Interactive TUI interface
+- [ ] Historical mitigation state tracking
+- [ ] Extended W^X validation research
 
 ---
 
