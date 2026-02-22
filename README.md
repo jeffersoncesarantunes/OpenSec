@@ -1,4 +1,4 @@
-# ● OpenSec
+# 🐡 OpenSec
 A lightweight process mitigation auditing tool for OpenBSD.
 
 ---
@@ -82,6 +82,23 @@ OpenSec follows OpenBSD principles:
 4. Non-Intrusiveness
 
 The tool is intentionally conservative in scope.
+
+---
+
+## ● Documentation
+
+Additional technical documentation is available:
+
+- **Security Model & Forensic Workflow**  
+  Detailed architectural description, trust model, telemetry logic, and post-audit investigation procedures.  
+  → `docs/SECURITY_MODEL.md`
+
+- **Performance Benchmarks & Operational Impact**  
+  Empirical measurements of CPU, memory footprint, latency, and scalability behavior under load.  
+  → `docs/BENCHMARKS.md`
+
+These documents formalize OpenSec’s architectural assumptions,
+operational safety guarantees, and performance characteristics.
 
 ---
 

@@ -1,4 +1,4 @@
-# ●  Performance Benchmarks & Operational Impact
+## ● Performance Benchmarks & Operational Impact
 
 This document provides empirical data regarding the resource consumption and operational safety of OpenSec on OpenBSD.
 

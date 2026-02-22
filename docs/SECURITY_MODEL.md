@@ -1,4 +1,4 @@
-# ● Technical Specification: Security Model & Forensic Workflow
+## ● Technical Specification: Security Model & Forensic Workflow
 
 This document details the architectural logic of OpenSec and provides a formal guide on how to interpret and act upon the results using native OpenBSD forensic tools.
 
