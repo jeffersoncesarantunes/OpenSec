@@ -210,8 +210,6 @@ doas ./bin/opensec
 
 ---
 
----
-
 ## ● Roadmap
 
 - [x] Kernel-level mitigation detection engine
