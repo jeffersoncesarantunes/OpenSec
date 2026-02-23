@@ -2,6 +2,20 @@
 
 A lightweight process mitigation auditing tool for OpenBSD.
 
+> **Project:** opensec (Open Security Auditor)  
+> **Author:** Jefferson Cesar Antunes  
+> **License:** MIT  
+> **Version:** 1.0.0  
+> **Description:** Security auditing and transparency utility inspired by the OpenBSD philosophy.
+
+---
+
+## ● Etymology & Origin
+
+The name **opensec** is a primary fusion of **Open** and **Sec** (Security), directly inspired by the **OpenBSD** philosophy.
+
+In this context, **Open** transcends the simple idea of "free software." It stands for **Absolute Transparency** and **Standardization**. It reflects the belief that security tools should be open for global audit, free from restrictive barriers, and built upon code so clear that it leaves no room for hidden vulnerabilities. **Opensec** is security without secrets.
+
 ---
 
 ## ● Overview
