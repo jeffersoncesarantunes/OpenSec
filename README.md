@@ -89,6 +89,8 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 79750    accounts-daemon   NONE            NONE            NATIVE
 Output reflects kernel-reported mitigation state only.
 
+```
+
 ---
 
 ## ● Project in Action
