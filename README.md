@@ -76,15 +76,17 @@ All inspection is passive and non-intrusive.
 
 ---
 
-## ● Example Output
+### ● Example Output
 
-```
-PID   USER   PLEDGE   UNVEIL   W^X   CLASSIFICATION
-123   root   YES      YES      OK    Hardened
-456   www    YES      NO       OK    Partial
-789   user   NO       NO       WEAK  Unrestricted
-```
-
+```text
+PID      PROCESS           PLEDGE          UNVEIL          CONTEXT   
+--------------------------------------------------------------------
+89905    opensec           NONE            NONE            NATIVE    
+80996    ksh               ACTIVE          NONE            NATIVE    
+96837    xfce4-terminal    NONE            NONE            NATIVE    
+20033    firefox           ACTIVE          NONE            NATIVE    
+18100    firefox           NONE            NONE            NATIVE    
+79750    accounts-daemon   NONE            NONE            NATIVE
 Output reflects kernel-reported mitigation state only.
 
 ---
