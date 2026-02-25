@@ -133,19 +133,6 @@ Mitigation absence does not automatically imply malicious behavior.
 
 ---
 
-## ● Project in Action
-
-- **Initial Scan**  
-  Automated baseline evaluation of the global security posture.
-
-- **Mitigation Analysis**  
-  Real-time monitoring of active security primitives and privilege levels.
-
-- **Forensic Summary**  
-  Forensic audit reporting with global mitigation statistics and risk assessment.
-
----
-
 ## ● Features
 
 - Kernel process table inspection via `libkvm`
