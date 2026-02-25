@@ -87,6 +87,7 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 20033    firefox           ACTIVE          NONE            NATIVE    
 18100    firefox           NONE            NONE            NATIVE    
 79750    accounts-daemon   NONE            NONE            NATIVE
+
 Output reflects kernel-reported mitigation state only.
 
 ```
