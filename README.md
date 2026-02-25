@@ -2,7 +2,7 @@
 
 A lightweight process mitigation auditing tool for OpenBSD.
 
-> **Project:** opensec (Open Security Auditor)  
+> **Project:** OpenSec (Open Security Auditor)  
 > **Author:** Jefferson Cesar Antunes  
 > **License:** MIT  
 > **Version:** 1.0.0  
