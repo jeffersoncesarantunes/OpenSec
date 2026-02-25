@@ -106,19 +106,6 @@ Output reflects kernel-reported mitigation state only.
 
 ---
 
-## ● Design Philosophy
-
-OpenSec follows OpenBSD principles:
-
-- Simplicity
-- Correctness
-- Determinism
-- Non-Intrusiveness
-
-The tool is intentionally conservative in scope.
-
----
-
 ## ● Documentation
 
 Additional technical documentation is available:
