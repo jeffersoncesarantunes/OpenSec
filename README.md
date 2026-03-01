@@ -78,7 +78,7 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 79750    accounts-daemon   NONE            NONE            NATIVE
 ```
 
-Output reflects kernel-reported mitigation state only.
+*Output reflects kernel-reported mitigation state only.*
 
 ## ● Project in Action
 
@@ -93,30 +93,37 @@ Output reflects kernel-reported mitigation state only.
 
 ## ● Features
 
-    Kernel process table inspection via libkvm
-    pledge(2) enforcement detection
-    unveil(2) state reporting
-    W^X-related enforcement indicators
-    Deterministic classification model
-    Clean terminal output
-    Minimal runtime footprint
+- Kernel process table inspection via `libkvm`.
+- `pledge(2)` enforcement detection.
+- `unveil(2)` state reporting.
+- W^X-related enforcement indicators.
+- Deterministic classification model.
+- Clean terminal output.
+- Minimal runtime footprint.
 
 ## ● Operational Integrity
 
 OpenSec is built for stability and forensic neutrality:
 
-    Read-only kernel state access
-    No process interruption
-    No execution state modification
-    Graceful handling of restricted entries
+- Read-only kernel state access.
+- No process interruption.
+- No execution state modification.
+- Graceful handling of restricted entries.
 
 ## ● Investigation Workflow
 
 After identifying processes without active mitigations, analysts may proceed with:
 
-    Syscall auditing: ktrace -p [PID] && kdump
-    File descriptor inspection: fstat -p [PID]
-    Binary verification: sha256 /path/to/binary
+```bash
+# Syscall auditing
+ktrace -p [PID] && kdump
+
+# File descriptor inspection
+fstat -p [PID]
+
+# Binary verification
+sha256 /path/to/binary
+```
 
 OpenSec serves as a mitigation visibility layer within a broader forensic workflow.
 
@@ -141,11 +148,11 @@ doas ./bin/opensec
 
 ## ● Tech Stack
 
-    Language: C (C99/C11 with OpenBSD extensions)
-    Kernel Interface: libkvm
-    Data Source: struct kinfo_proc
-    Build Tool: BSD make
-    Target Platform: OpenBSD
+- **Language:** C (C99/C11 with OpenBSD extensions)
+- **Kernel Interface:** `libkvm`
+- **Data Source:** `struct kinfo_proc`
+- **Build Tool:** BSD `make`
+- **Target Platform:** OpenBSD
 
 ## ● Roadmap
 
@@ -160,5 +167,3 @@ doas ./bin/opensec
 ## ● License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
-
-Developed as a practical exploration of OpenBSD process mitigation visibility and kernel state auditing.
