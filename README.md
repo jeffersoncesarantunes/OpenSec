@@ -83,13 +83,13 @@ Output reflects kernel-reported mitigation state only.
 ● Project in Action
 
 ![Initial Scan](./Imagens/opensec1.png)
-1-*Automated baseline evaluation.*
+1- *Automated baseline evaluation.*
 
 ![Mitigation Analysis](./Imagens/opensec2.png)
-2-*Real-time monitoring of active mitigation primitives.*
+2- *Real-time monitoring of active mitigation primitives.*
 
 ![Forensic Summary](./Imagens/opensec3.png)
-3-*Forensic audit reporting and mitigation statistics.*
+3- *Forensic audit reporting and mitigation statistics.*
 
 ● Features
 
@@ -149,11 +149,13 @@ doas ./bin/opensec
 
 ● Roadmap
 
-    Process-type differentiation
-    Structured export format (CSV/JSON)
-    Interactive TUI interface
-    Historical mitigation state tracking
-    Extended W^X validation research
+[x] Core mitigation auditing engine
+[x] pledge/unveil visibility
+[ ] Process-type differentiation
+[ ] Structured export format (CSV/JSON)
+[ ] Interactive TUI interface
+[ ] Historical mitigation state tracking
+[ ] Extended W^X validation research
 
 ● License
 
