@@ -147,7 +147,7 @@ doas ./bin/opensec
     Build Tool: BSD make
     Target Platform: OpenBSD
 
-## ● Roadmap
+● Roadmap
 
 - [x] Core mitigation auditing engine
 - [x] pledge/unveil visibility
@@ -157,7 +157,7 @@ doas ./bin/opensec
 - [ ] Historical mitigation state tracking
 - [ ] Extended W^X validation research
 
-## ● License
+● License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
 
