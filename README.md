@@ -2,11 +2,13 @@
 
 Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, and W^X visibility.
 
-    Project: OpenSec (Open Security Auditor)
-    Author: Jefferson Cesar Antunes
-    License: MIT
-    Version: 1.0.0
-    Description: Passive kernel-state mitigation auditing tool for OpenBSD systems.
+> Project: OpenSec (Open Security Auditor)
+> Author: Jefferson Cesar Antunes
+> License: MIT
+> Version: 1.0.0
+> Description: Passive kernel-state mitigation auditing tool for OpenBSD systems.
+
+---
 
 ● Etymology & Origin
 
