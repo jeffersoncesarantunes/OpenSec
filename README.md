@@ -147,15 +147,15 @@ doas ./bin/opensec
     Build Tool: BSD make
     Target Platform: OpenBSD
 
-● Roadmap
+## ● Roadmap
 
-[x] Core mitigation auditing engine
-[x] pledge/unveil visibility
-[ ] Process-type differentiation
-[ ] Structured export format (CSV/JSON)
-[ ] Interactive TUI interface
-[ ] Historical mitigation state tracking
-[ ] Extended W^X validation research
+- [x] Core mitigation auditing engine
+- [x] pledge/unveil visibility
+- [ ] Process-type differentiation
+- [ ] Structured export format (CSV/JSON)
+- [ ] Interactive TUI interface
+- [ ] Historical mitigation state tracking
+- [ ] Extended W^X validation research
 
 ● License
 
