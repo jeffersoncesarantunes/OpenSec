@@ -8,7 +8,7 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 > Version: 1.0.0  
 > Description: Passive kernel-state mitigation auditing tool for OpenBSD systems.
 
-##● Etymology & Origin
+## ● Etymology & Origin
 
 The name OpenSec was born from the fusion of Open and Security, directly inspired by the OpenBSD philosophy.
 
@@ -17,7 +17,7 @@ In this context, Open represents more than free software. It stands for absolute
 OpenSec reflects the principle that security tools must be inspectable, minimal, and free from hidden logic.
 It is security through clarity.
 
-##● Overview
+## ● Overview
 
 OpenSec is a minimal forensic utility designed to audit process-level mitigation mechanisms on OpenBSD.
 
@@ -34,7 +34,7 @@ Classification is derived strictly from kernel-reported state.
 
 OpenSec does not perform tracing, behavioral inference, or runtime instrumentation.
 
-##● Why
+## ● Why
 
 OpenBSD provides strong built-in mitigation primitives. However, visibility into which processes actively enforce them is not centralized.
 
@@ -47,7 +47,7 @@ OpenSec provides:
 
 The focus remains exclusively on observable kernel metadata.
 
-##● How It Works
+## ● How It Works
 
 OpenSec interfaces with libkvm to access the kernel process table in read-only mode.
 
@@ -65,7 +65,7 @@ The tool does not:
     Suspend execution
     Instrument binaries
 
-##● Example Output
+## ● Example Output
 
 ```text
 PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
@@ -80,7 +80,7 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 
 Output reflects kernel-reported mitigation state only.
 
-##● Project in Action
+## ● Project in Action
 
 ![Initial Scan](./Imagens/opensec1.png)
 1- *Automated baseline evaluation.*
@@ -91,7 +91,7 @@ Output reflects kernel-reported mitigation state only.
 ![Forensic Summary](./Imagens/opensec3.png)
 3- *Forensic audit reporting and mitigation statistics.*
 
-##● Features
+## ● Features
 
     Kernel process table inspection via libkvm
     pledge(2) enforcement detection
@@ -101,7 +101,7 @@ Output reflects kernel-reported mitigation state only.
     Clean terminal output
     Minimal runtime footprint
 
-##● Operational Integrity
+## ● Operational Integrity
 
 OpenSec is built for stability and forensic neutrality:
 
@@ -110,7 +110,7 @@ OpenSec is built for stability and forensic neutrality:
     No execution state modification
     Graceful handling of restricted entries
 
-##● Investigation Workflow
+## ● Investigation Workflow
 
 After identifying processes without active mitigations, analysts may proceed with:
 
@@ -120,7 +120,7 @@ After identifying processes without active mitigations, analysts may proceed wit
 
 OpenSec serves as a mitigation visibility layer within a broader forensic workflow.
 
-##● Deployment
+## ● Deployment
 
 Requirements:
     OpenBSD (stable or current)
@@ -128,7 +128,7 @@ Requirements:
     BSD make
     doas or root privileges
 
-*Build and Execute:*
+## *Build and Execute:*
 
 ```bash
 
@@ -139,7 +139,7 @@ doas ./bin/opensec
 
 ```
 
-##● Tech Stack
+## ● Tech Stack
 
     Language: C (C99/C11 with OpenBSD extensions)
     Kernel Interface: libkvm
@@ -147,7 +147,7 @@ doas ./bin/opensec
     Build Tool: BSD make
     Target Platform: OpenBSD
 
-##● Roadmap
+## ● Roadmap
 
 - [x] Core mitigation auditing engine
 - [x] pledge/unveil visibility
@@ -157,7 +157,7 @@ doas ./bin/opensec
 - [ ] Historical mitigation state tracking
 - [ ] Extended W^X validation research
 
-##● License
+## ● License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
 
