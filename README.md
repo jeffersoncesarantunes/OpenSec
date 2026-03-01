@@ -157,12 +157,11 @@ doas ./bin/opensec
 ## ● Roadmap
 
 - [x] Core mitigation auditing engine
-- [x] pledge/unveil visibility
-- [ ] Process-type differentiation
-- [ ] Structured export format (CSV/JSON)
-- [ ] Interactive TUI interface
-- [ ] Historical mitigation state tracking
-- [ ] Extended W^X validation research
+- [x] `pledge(2)` / `unveil(2)` visibility
+- [x] Kernel state extraction via `libkvm`
+- [ ] Structured export formats (JSON/CSV)
+- [ ] Integration with `sha256` for binary integrity validation
+- [ ] Fine-grained W^X violation reporting
 
 ## ● License
 
