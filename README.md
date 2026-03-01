@@ -83,13 +83,13 @@ Output reflects kernel-reported mitigation state only.
 ● Project in Action
 
 ![Initial Scan](./Imagens/opensec1.png)
-*Automated baseline evaluation.*
+1-*Automated baseline evaluation.*
 
 ![Mitigation Analysis](./Imagens/opensec2.png)
-*Real-time monitoring of active mitigation primitives.*
+2-*Real-time monitoring of active mitigation primitives.*
 
 ![Forensic Summary](./Imagens/opensec3.png)
-*Forensic audit reporting and mitigation statistics.*
+3-*Forensic audit reporting and mitigation statistics.*
 
 ● Features
 
@@ -130,10 +130,14 @@ Requirements:
 
 Build and Execute:
 
+```bash
+
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 make clean && make
 doas ./bin/opensec
+
+```
 
 ● Tech Stack
 
