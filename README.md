@@ -157,8 +157,8 @@ doas ./bin/opensec
 - [ ] Historical mitigation state tracking
 - [ ] Extended W^X validation research
 
-● License
+## ● License
 
-Distributed under the MIT License. See LICENSE for details.
+Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
 
 Developed as a practical exploration of OpenBSD process mitigation visibility and kernel state auditing.
