@@ -117,10 +117,14 @@ After identifying processes without active mitigations, analysts may proceed wit
 ```bash
 # Syscall auditing
 ktrace -p [PID] && kdump
+```
 
+```bash
 # File descriptor inspection
 fstat -p [PID]
+```
 
+```bash
 # Binary verification
 sha256 /path/to/binary
 ```
