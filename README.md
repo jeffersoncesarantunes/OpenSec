@@ -30,13 +30,14 @@ OpenSec is a minimal forensic utility designed to audit process-level mitigation
 It inspects kernel-exposed process metadata through:
 
     kvm(3)
-    struct kinfo_proc
+    struct kinfo_proc (kernel process table)
 
 The tool evaluates whether active processes enforce core security primitives such as:
 
     pledge(2)
     unveil(2)
-    W^X-related enforcement indicators
+
+Additionally, it inspects kernel metadata that may indirectly indicate W^X enforcement behavior.
 
 Classification is derived strictly from kernel-reported state.
 
