@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #define RED   "\x1b[31m"
 #define GRN   "\x1b[32m"
@@ -11,6 +12,8 @@
 #define CYN   "\x1b[36m"
 #define BOLD  "\x1b[1m"
 #define RESET "\x1b[0m"
+
+enum OutputFormat { NONE, JSON, CSV };
 
 void print_separator() {
     printf("-----------------------------------------------------------------------------------------\n");
@@ -25,11 +28,60 @@ void print_header() {
     print_separator();
 }
 
-int main() {
+void export_json_manual(ProcessInfo *processes, int count, const char *filename) {
+    FILE *f = fopen(filename, "w");
+    if (!f) return;
+    fputs("[\n", f);
+    for (int i = 0; i < count; i++) {
+        fprintf(f, "  {\n");
+        fprintf(f, "    \"pid\": %d,\n", processes[i].pid);
+        fprintf(f, "    \"name\": \"%s\",\n", processes[i].name);
+        fprintf(f, "    \"pledge\": %s,\n", processes[i].has_pledge ? "true" : "false");
+        fprintf(f, "    \"unveil\": %s,\n", processes[i].has_unveil ? "true" : "false");
+        fprintf(f, "    \"wxneeded\": %s,\n", processes[i].wxneeded ? "true" : "false");
+        fprintf(f, "    \"chrooted\": %s,\n", processes[i].chrooted ? "true" : "false");
+        fprintf(f, "    \"context\": \"%s\"\n", (processes[i].pid < 100) ? "KERNEL" : "NATIVE");
+        fprintf(f, "  }%s\n", (i + 1 < count) ? "," : "");
+    }
+    fputs("]\n", f);
+    fclose(f);
+}
+
+void export_csv(ProcessInfo *processes, int count, const char *filename) {
+    FILE *f = fopen(filename, "w");
+    if (!f) return;
+    fprintf(f, "pid,name,pledge,unveil,wxneeded,chrooted,context\n");
+    for (int i = 0; i < count; i++) {
+        fprintf(f, "%d,%s,%d,%d,%d,%d,%s\n",
+            processes[i].pid,
+            processes[i].name,
+            processes[i].has_pledge,
+            processes[i].has_unveil,
+            processes[i].wxneeded,
+            processes[i].chrooted,
+            (processes[i].pid < 100) ? "KERNEL" : "NATIVE"
+        );
+    }
+    fclose(f);
+}
+
+int main(int argc, char *argv[]) {
+    enum OutputFormat out_format = NONE;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--format") == 0 && i + 1 < argc) {
+            if (strcmp(argv[i+1], "json") == 0) out_format = JSON;
+            else if (strcmp(argv[i+1], "csv") == 0) out_format = CSV;
+            else {
+                fprintf(stderr, RED "[!] Unknown format: %s\n" RESET, argv[i+1]);
+                return 1;
+            }
+            i++;
+        }
+    }
+
     SystemStats stats = {0};
     int count = 0;
     ProcessInfo *processes = get_all_processes(&count);
-
     if (!processes) {
         fprintf(stderr, RED BOLD "[!] Error: Could not access KVM. Are you root?\n" RESET);
         return 1;
@@ -47,15 +99,12 @@ int main() {
         char *ctx_color = (processes[i].pid < 100) ? MAG : BLU;
 
         printf("%-8d %-25.25s ", processes[i].pid, processes[i].name);
-        
         printf("%s%-15s" RESET " ", 
                processes[i].has_pledge ? GRN : RED, 
                processes[i].has_pledge ? "ACTIVE" : "NONE");
-        
         printf("%s%-15s" RESET " ", 
                processes[i].has_unveil ? GRN : YEL, 
                processes[i].has_unveil ? "ACTIVE" : "NONE");
-        
         printf("%s%-10s" RESET "\n", ctx_color, ctx_label);
 
         if ((i + 1) % 20 == 0 && (i + 1) < count) {
@@ -74,6 +123,14 @@ int main() {
     printf("    [#] W^X Status:      %s%s" RESET "\n", stats.wxneeded_processes ? RED BOLD "INSECURE" : GRN "ENFORCED", stats.wxneeded_processes ? "" : "");
     printf("    [#] Chroot Jails:    %s%d processes" RESET "\n", CYN, stats.chrooted_processes);
     printf("\n" BOLD GRN "[*] Audit complete." RESET "\n");
+
+    if (out_format == JSON) {
+        export_json_manual(processes, count, "output.json");
+        printf(GRN "[*] JSON export completed: output.json\n" RESET);
+    } else if (out_format == CSV) {
+        export_csv(processes, count, "output.csv");
+        printf(GRN "[*] CSV export completed: output.csv\n" RESET);
+    }
 
     free(processes);
     return 0;

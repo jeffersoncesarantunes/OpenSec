@@ -8,7 +8,7 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 ![Version](https://img.shields.io/badge/version-1.0.0-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
 
-## 🌐 Contact
+## ● Contact
 
 [![Discord](https://img.shields.io/badge/Discord-Jefferson-5865F2?logo=discord&logoColor=white)](https://discord.com/users/1476405883733807247)
 [![X](https://img.shields.io/badge/@j3ff3rsonc3sar-000000?logo=x&logoColor=white)](https://x.com/j3ff3rsonc3sar)
@@ -24,7 +24,7 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 
 The name OpenSec was born from the fusion of Open and Security, directly inspired by the OpenBSD philosophy.
 
-In this context, Open represents more than free software. It stands for absolute transparency, auditability, and deterministic security design.
+Open represents more than free software. It stands for transparency, auditability, and deterministic security design.
 
 OpenSec reflects the principle that security tools must be inspectable, minimal, and free from hidden logic.  
 It is security through clarity.
@@ -43,7 +43,7 @@ The tool evaluates whether active processes enforce core security primitives suc
     pledge(2)
     unveil(2)
 
-Additionally, it inspects kernel metadata that may indirectly indicate W^X enforcement behavior.
+Additionally, it inspects kernel metadata that may indicate W^X enforcement behavior.
 
 Classification is derived strictly from kernel-reported state.
 
@@ -60,8 +60,6 @@ OpenSec provides:
 - Hardening validation support
 - Live forensic triage assistance
 - Security posture verification
-
-The focus remains exclusively on observable kernel metadata.
 
 ## ● How It Works
 
@@ -111,9 +109,9 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 
 ## ● Features
 
-- Kernel process table inspection via `libkvm`
-- `pledge(2)` enforcement detection
-- `unveil(2)` state reporting
+- Kernel process table inspection via \`libkvm\`
+- \`pledge(2)\` enforcement detection
+- \`unveil(2)\` state reporting
 - W^X-related enforcement indicators
 - Deterministic classification model
 - Clean terminal output
@@ -145,7 +143,7 @@ fstat -p [PID]
 ```bash
 # Binary verification
 sha256 /path/to/binary
-```
+``` 
 
 OpenSec serves as a mitigation visibility layer within a broader forensic workflow.
 
@@ -174,6 +172,54 @@ make
 doas ./bin/opensec
 ```
 
+## ● Export Formats
+
+OpenSec can generate structured output for further analysis or reporting.
+
+### CSV Export
+```bash
+doas ./bin/opensec --format csv
+```
+
+Sample snippet (\`output.csv\`):
+```csv
+pid,name,pledge,unveil,wxneeded,chrooted,context
+19286,opensec,0,0,0,0,NATIVE
+85953,firefox,1,0,0,0,NATIVE
+...
+```
+
+### JSON Export
+```bash
+doas ./bin/opensec --format json
+```
+
+Sample snippet (\`output.json\`):
+```json
+[
+  {
+    "pid": 19286,
+    "name": "opensec",
+    "pledge": false,
+    "unveil": false,
+    "wxneeded": false,
+    "chrooted": false,
+    "context": "NATIVE"
+  },
+  {
+    "pid": 85953,
+    "name": "firefox",
+    "pledge": true,
+    "unveil": false,
+    "wxneeded": false,
+    "chrooted": false,
+    "context": "NATIVE"
+  }
+]
+```
+
+Note: Choose the format with \`--format json\` or \`--format csv\`. If omitted, OpenSec prints output to the terminal only.
+
 ## ● Tech Stack
 
 - **Language:** C (C99/C11 with OpenBSD extensions)
@@ -187,7 +233,7 @@ doas ./bin/opensec
 - [x] Core mitigation auditing engine
 - [x] pledge(2) / unveil(2) visibility
 - [x] Kernel state extraction via libkvm(3)
-- [ ] Structured export formats (JSON / CSV)
+- [x] Structured export formats (JSON / CSV)
 - [ ] Integration with sha256 for binary integrity validation
 - [ ] Fine-grained W^X violation detection
 
