@@ -14,3 +14,5 @@ obj/
 # IDE
 .vscode/
 .idea/
+output.json
+output.csv
