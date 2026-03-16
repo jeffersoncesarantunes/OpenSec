@@ -158,12 +158,19 @@ OpenSec serves as a mitigation visibility layer within a broader forensic workfl
 - BSD make
 - doas or root privileges
 
-**Build and Execute:**
+## ● Build and Run
 
 ```bash
+# Clone the repository
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
+
+# Enter the project directory
 cd OpenSec
-make clean && make
+
+# Build the project
+make
+
+# Run OpenSec (requires root privileges)
 doas ./bin/opensec
 ```
 
