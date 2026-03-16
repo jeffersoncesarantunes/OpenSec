@@ -16,3 +16,5 @@ obj/
 .idea/
 output.json
 output.csv
+bin/
+build/

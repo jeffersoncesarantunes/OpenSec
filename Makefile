@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -I./include
+CFLAGS = -Wall -Wextra -I./include -I/usr/local/include
 LDFLAGS = -lkvm
 TARGET = bin/opensec
 SRC = src/main.c src/engine.c
