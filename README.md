@@ -8,6 +8,8 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 ![Version](https://img.shields.io/badge/version-1.0.0-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
 
+## ● Project Information
+
 - **Project:** OpenSec (Open Security Auditor)
 - **Author:** Jefferson Cesar Antunes
 - **License:** MIT
