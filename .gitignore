@@ -18,3 +18,4 @@ output.json
 output.csv
 bin/
 build/
+baseline.json
