@@ -19,3 +19,7 @@ output.csv
 bin/
 build/
 baseline.json
+bin/
+*.json
+*.csv
+opensec
