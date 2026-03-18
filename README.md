@@ -100,14 +100,14 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 
 ## ● Project in Action
 
-![Initial Scan](./Imagens/opensec1.png)
-*1- Automated baseline evaluation.*
+![Initial Scan](./Imagens/open1.png)
+*1- Real-time process audit showing security pledges and mitigations.*
 
-![Mitigation Analysis](./Imagens/opensec2.png)
-*2- Real-time monitoring of active mitigation primitives.*
+![Mitigation Analysis](./Imagens/open2.png)
+*2- JSON output for structured analysis of processes.*
 
-![Forensic Summary](./Imagens/opensec3.png)
-*3- Forensic audit reporting and mitigation statistics.*
+![Forensic Summary](./Imagens/open3.png)
+*3- Clean, tabulated view of all processes with security context (using sed for formatting).*
 
 ## ● Features
 
