@@ -65,8 +65,72 @@ void export_csv(ProcessInfo *processes, int count, const char *filename) {
     fclose(f);
 }
 
+void check_integrity() {
+    FILE *f = fopen("baseline.json", "r");
+    if (!f) {
+        printf("[!] baseline.json not found\n");
+        return;
+    }
+
+    char line[512];
+    char path[256];
+    char expected[128];
+
+    printf("[+] Checking binary integrity...\n\n");
+
+    while (fgets(line, sizeof(line), f)) {
+        if (sscanf(line, " \"%255[^\"]\" : \"%127[^\"]\"", path, expected) == 2) {
+
+            if (access(path, F_OK) != 0) {
+                printf(RED "[ALERT] %s missing!\n" RESET, path);
+                continue;
+            }
+
+            char cmd[512];
+            snprintf(cmd, sizeof(cmd), "sha256 %s", path);
+
+            FILE *fp = popen(cmd, "r");
+            if (!fp) {
+                printf(YEL "[WARN] Could not check %s\n" RESET, path);
+                continue;
+            }
+
+            char output[256];
+            char current[128] = {0};
+
+            if (fgets(output, sizeof(output), fp)) {
+                sscanf(output, "SHA256 (%*[^)]) = %127s", current);
+            }
+
+            pclose(fp);
+
+            if (strlen(current) == 0) {
+                printf(YEL "[WARN] Failed to read hash for %s\n" RESET, path);
+                continue;
+            }
+
+            if (strcmp(current, expected) == 0) {
+                printf(GRN "[OK] %s\n" RESET, path);
+            } else {
+                printf(RED "[ALERT] %s modified!\n" RESET, path);
+                printf(RED "        Expected: %s\n" RESET, expected);
+                printf(RED "        Found:    %s\n\n" RESET, current);
+            }
+        }
+    }
+
+    fclose(f);
+}
+
 int main(int argc, char *argv[]) {
     enum OutputFormat out_format = NONE;
+
+    if (argc > 1 && strcmp(argv[1], "--check-integrity") == 0) {
+        printf("[+] Running integrity check...\n\n");
+        check_integrity();
+        return 0;
+    }
+
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--format") == 0 && i + 1 < argc) {
             if (strcmp(argv[i+1], "json") == 0) out_format = JSON;
