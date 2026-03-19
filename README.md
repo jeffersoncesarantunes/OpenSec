@@ -177,7 +177,7 @@ doas ./bin/opensec
 ## ● Repository Structure
 
 ```bash
-.
+
 ├── Imagens
 │   ├── open1.png
 │   ├── open2.png
