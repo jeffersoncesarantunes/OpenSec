@@ -174,6 +174,41 @@ make
 doas ./bin/opensec
 ```
 
+## ● Repository Structure
+
+```bash
+.
+├── Imagens
+│   ├── open1.png
+│   ├── open2.png
+│   └── open3.png
+├── LICENSE
+├── Makefile
+├── README.md
+├── bin
+│   └── opensec
+├── docs
+│   ├── BENCHMARKS.md
+│   └── SECURITY_MODEL.md
+├── examples
+│   ├── baseline.json
+│   ├── sample_output.csv
+│   └── sample_output.json
+├── include
+│   └── opensec.h
+└── src
+    ├── engine.c
+    └── main.c
+```
+
+### Notes
+
+- `src/` contains the core auditing engine and execution flow  
+- `include/` defines shared interfaces and structures  
+- `docs/` includes the security model and performance benchmarks  
+- `examples/` provides baseline and sample outputs for analysis  
+- `bin/` contains the compiled binary (built locally)
+
 ## ● Export Formats
 
 OpenSec can generate structured output for further analysis or reporting.
