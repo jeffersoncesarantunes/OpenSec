@@ -161,18 +161,22 @@ OpenSec serves as a mitigation visibility layer within a broader forensic workfl
 ## ● Build and Run
 
 ```bash
-# Clone the repository
-git clone https://github.com/jeffersoncesarantunes/OpenSec.git
+# Build (clean old binaries first)
+make clean && make
 
-# Enter the project directory
-cd OpenSec
-
-# Build the project
-make
-
-# Run OpenSec (requires root privileges)
+# Standard execution
 doas ./bin/opensec
+
+# Silent mode (Export only, no terminal pollution)
+doas ./bin/opensec --format json --quiet
+doas ./bin/opensec --format csv --quiet
+
+# Integrity audit
+doas ./bin/opensec --check-integrity
 ```
+
+**Note:**--quiet suppresses terminal output. Optimized for cron(8) and automated auditing scripts.
+
 
 ## ● Repository Structure
 
@@ -218,7 +222,7 @@ OpenSec can generate structured output for further analysis or reporting.
 doas ./bin/opensec --format csv
 ```
 
-Sample snippet (\`output.csv\`):
+Sample snippet (output.csv):
 ```csv
 pid,name,pledge,unveil,wxneeded,chrooted,context
 19286,opensec,0,0,0,0,NATIVE
@@ -231,7 +235,7 @@ pid,name,pledge,unveil,wxneeded,chrooted,context
 doas ./bin/opensec --format json
 ```
 
-Sample snippet (\`output.json\`):
+Sample snippet (output.json):
 ```json
 [
   {
@@ -255,7 +259,31 @@ Sample snippet (\`output.json\`):
 ]
 ```
 
-Note: Choose the format with \`--format json\` or \`--format csv\`. If omitted, OpenSec prints output to the terminal only.
+Note: Choose the format with --format json or --format csv. If omitted, OpenSec prints output to the terminal only.
+
+## ● Integrity Verification
+
+OpenSec can verify the integrity of critical system binaries by comparing their current SHA256 hashes against a trusted baseline.
+
+### 1. Create a Baseline
+Generate a `baseline.json` file in a known secure state:
+
+```json
+{
+  "/bin/ls" : "$(sha256 -q /bin/ls)",
+  "/usr/bin/ssh" : "$(sha256 -q /usr/bin/ssh)",
+  "/usr/bin/doas" : "$(sha256 -q /usr/bin/doas)"
+}
+```
+
+### 2. Audit Integrity
+Run the audit against your baseline:
+
+```bash
+doas ./bin/opensec --check-integrity
+```
+
+**Note:** Use the --quiet flag to suppress output unless a mismatch is found (ideal for cron jobs).
 
 ## ● Tech Stack
 
@@ -271,7 +299,8 @@ Note: Choose the format with \`--format json\` or \`--format csv\`. If omitted, 
 - [x] pledge(2) / unveil(2) visibility
 - [x] Kernel state extraction via libkvm(3)
 - [x] Structured export formats (JSON / CSV)
-- [ ] Integration with sha256 for binary integrity validation
+- [x] Integration with sha256 for binary integrity validation
+- [x] Silent mode for automation (--quiet)
 - [ ] Fine-grained W^X violation detection
 
 ## ● License
