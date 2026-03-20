@@ -111,9 +111,9 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 
 ## ● Features
 
-- Kernel process table inspection via \`libkvm\`
-- \`pledge(2)\` enforcement detection
-- \`unveil(2)\` state reporting
+- Kernel process table inspection via `libkvm`
+- `pledge(2)` enforcement detection
+- `unveil(2)` state reporting
 - W^X-related enforcement indicators
 - Deterministic classification model
 - Clean terminal output
@@ -161,6 +161,10 @@ OpenSec serves as a mitigation visibility layer within a broader forensic workfl
 ## ● Build and Run
 
 ```bash
+# Clone the repository
+git clone https://github.com/jeffersoncesarantunes/OpenSec.git
+cd OpenSec
+
 # Build (clean old binaries first)
 make clean && make
 
@@ -173,10 +177,9 @@ doas ./bin/opensec --format csv --quiet
 
 # Integrity audit
 doas ./bin/opensec --check-integrity
-```
+``` 
 
-**Note:**--quiet suppresses terminal output. Optimized for cron(8) and automated auditing scripts.
-
+**Note:** `--quiet` suppresses terminal output. Optimized for `cron(8)` and automated auditing scripts.
 
 ## ● Repository Structure
 
