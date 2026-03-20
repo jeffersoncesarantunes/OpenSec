@@ -179,7 +179,7 @@ doas ./bin/opensec --format csv --quiet
 doas ./bin/opensec --check-integrity
 ``` 
 
-**Note:** `--quiet` suppresses terminal output. Optimized for `cron(8)` and automated auditing scripts.
+> **Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
 
 ## ● Repository Structure
 
