@@ -260,7 +260,7 @@ Sample snippet (output.json):
 ]
 ```
 
-> **Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
+- **Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
 
 ## ● Integrity Verification
 
