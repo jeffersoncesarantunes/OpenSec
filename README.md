@@ -179,8 +179,6 @@ doas ./bin/opensec --format csv --quiet
 doas ./bin/opensec --check-integrity
 ``` 
 
-> **Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
-
 ## ● Repository Structure
 
 ```bash
@@ -262,7 +260,7 @@ Sample snippet (output.json):
 ]
 ```
 
-	**Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
+> **Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
 
 ## ● Integrity Verification
 
