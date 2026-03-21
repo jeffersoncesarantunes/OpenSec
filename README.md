@@ -181,29 +181,19 @@ doas ./bin/opensec --check-integrity
 
 ## ● Repository Structure
 
-```bash
-
-├── Imagens
-│   ├── open1.png
-│   ├── open2.png
-│   └── open3.png
-├── LICENSE
-├── Makefile
-├── README.md
-├── bin
-│   └── opensec
-├── docs
-│   ├── BENCHMARKS.md
-│   └── SECURITY_MODEL.md
-├── examples
-│   ├── baseline.json
-│   ├── sample_output.csv
-│   └── sample_output.json
-├── include
-│   └── opensec.h
-└── src
-    ├── engine.c
-    └── main.c
+```text
+├── bin/                # Compiled binaries (Ignored by .gitignore)
+├── docs/               # Technical specs, Benchmarks & Security model
+├── examples/           # Sample outputs (JSON/CSV) and baselines
+├── Imagens/            # OpenSec screenshots and execution flow
+├── include/            # Header files (.h) - Interface definitions
+│   └── opensec.h       # Main header (Constants & Prototypes)
+├── src/                # Core implementation (.c) - Engine logic
+│   ├── engine.c        # Audit logic & Process mitigation checks
+│   └── main.c          # Entry point and CLI argument parsing
+├── LICENSE             # MIT License terms
+├── Makefile            # Build system (POSIX compliant)
+└── README.md           # Project entry point and manual
 ```
 
 ### Notes
