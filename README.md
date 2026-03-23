@@ -2,11 +2,13 @@
 
 Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, and W^X visibility.
 
-[![OpenBSD](https://img.shields.io/badge/platform-openbsd-orange)](https://www.openbsd.org)
-[![Language](https://img.shields.io/badge/language-C-blue)](https://gcc.gnu.org/)
-[![License](https://img.shields.io/badge/license-MIT-red)](LICENSE)
-![Version](https://img.shields.io/badge/version-1.0.0-orange)
-![Status](https://img.shields.io/badge/status-active-success)
+<p align="center">
+<a href="https://www.openbsd.org"><img src="https://img.shields.io/badge/Platform-OpenBSD-FBD12B?style=flat-square&logo=openbsd&logoColor=black" /></a>
+<a href="https://gcc.gnu.org/"><img src="https://img.shields.io/badge/Language-C11-1793D1?style=flat-square&logo=c&logoColor=white" /></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white" /></a>
+<img src="https://img.shields.io/badge/Version-1.0.0-333333?style=flat-square" />
+<img src="https://img.shields.io/badge/Status-Active-00FF41?style=flat-square" />
+</p>
 
 ## ● Project Information
 
@@ -15,12 +17,6 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 - **License:** MIT
 - **Version:** 1.0.0
 - **Description:** Passive kernel-state mitigation auditing tool for OpenBSD.
-
-## ● Contact
-
-[![Discord](https://img.shields.io/badge/Discord-Jefferson-5865F2?logo=discord&logoColor=white)](https://discord.com/users/1476405883733807247)
-[![X](https://img.shields.io/badge/@j3ff3rsonc3sar-000000?logo=x&logoColor=white)](https://x.com/j3ff3rsonc3sar)
-[![Mastodon](https://img.shields.io/badge/Mastodon-@jeffersoncesar-6364FF?logo=mastodon&logoColor=white)](https://mastodon.social/@jeffersoncesar)
 
 ## ● Etymology & Origin
 
