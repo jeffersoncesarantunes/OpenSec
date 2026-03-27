@@ -26,7 +26,7 @@ void print_separator() {
 void print_header() {
     if (quiet_mode) return;
     printf(BOLD CYN "=========================================================================================\n");
-    printf("  OpenSec - OpenBSD Process Security Auditor                         [OpenBSD]\n");
+    printf("  OpenSec - OpenBSD Security Auditor\n");                         
     printf("=========================================================================================\n" RESET);
     printf(BOLD "[+] Scanning system processes...\n\n" RESET);
     printf(BOLD "%-8s %-25s %-15s %-15s %-10s\n" RESET, "PID", "PROCESS", "PLEDGE", "UNVEIL", "CONTEXT");

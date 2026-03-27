@@ -94,14 +94,14 @@ PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
 
 ## ● Project in Action
 
-![Initial Scan](./Imagens/open1.png)
-*1- Real-time process audit showing security pledges and mitigations.*
+![Initial Scan](./Imagens/opensec1.png)
+*1- Build Process and Initialization: Environment preparation and initial active kernel scanning.*
 
-![Mitigation Analysis](./Imagens/open2.png)
-*2- JSON output for structured analysis of processes.*
+![Mitigation Analysis](./Imagens/opensec2.png)
+*2- Silent Execution and Report Generation: Using --quiet and --format flags to generate clean JSON/CSV data.*
 
-![Forensic Summary](./Imagens/open3.png)
-*3- Clean, tabulated view of all processes with security context (using sed for formatting).*
+![Forensic Summary](./Imagens/opensec3.png)
+*3- Data Integrity and Security Audit: Verifying file hashes with sha256 and inspecting process-level restrictions (pledge, unveil) in a tabulated view.*
 
 ## ● Features
 
