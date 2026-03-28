@@ -184,8 +184,10 @@ sed 's/"//g' output.csv | column -t -s ','
 OpenSec can generate structured output for further analysis or reporting.
 
 ### CSV Export
+
+Ideal for spreadsheet analysis or quick terminal filtering:
 ```bash
-doas ./bin/opensec --format csv
+doas ./bin/opensec --format csv --quiet
 ```
 
 Sample snippet (output.csv):
@@ -198,7 +200,7 @@ pid,name,pledge,unveil,wxneeded,chrooted,context
 
 ### JSON Export
 ```bash
-doas ./bin/opensec --format json
+doas ./bin/opensec --format json --quiet
 ```
 
 Sample snippet (output.json):
@@ -225,7 +227,7 @@ Sample snippet (output.json):
 ]
 ```
 
-- Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
+**Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only. Use the `--quiet` flag to suppress standard output during file generation.
 
 ## ● Post-Analysis & Investigation
 
