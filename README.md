@@ -157,27 +157,16 @@ sed 's/"//g' output.csv | column -t -s ','
 ## ● Repository Structure
 
 ```text
-├── bin/                # Compiled binaries (Ignored by .gitignore)
-├── docs/               # Technical specs, Benchmarks & Security model
-├── examples/           # Sample outputs (JSON/CSV) and baselines
-├── Imagens/            # OpenSec screenshots and execution flow
-├── include/            # Header files (.h) - Interface definitions
-│   └── opensec.h       # Main header (Constants & Prototypes)
-├── src/                # Core implementation (.c) - Engine logic
-│   ├── engine.c        # Audit logic & Process mitigation checks
-│   └── main.c          # Entry point and CLI argument parsing
+├── bin/                # Compiled binaries (locally built)
+├── docs/               # Technical specs & Security model
+├── examples/           # Sample outputs (JSON/CSV) for testing
+├── Imagens/            # Execution flow screenshots
+├── include/            # Header files (opensec.h)
+├── src/                # Core engine logic (engine.c, main.c)
 ├── LICENSE             # MIT License terms
-├── Makefile            # Build system (POSIX compliant)
-└── README.md           # Project entry point and manual
+├── Makefile            # POSIX compliant build system
+└── README.md           # Project entry point
 ```
-
-### Notes
-
-- `src/` contains the core auditing engine and execution flow  
-- `include/` defines shared interfaces and structures  
-- `docs/` includes the security model and performance benchmarks  
-- `examples/` provides baseline and sample outputs for analysis  
-- `bin/` contains the compiled binary (built locally)
 
 ## ● Export Formats
 
@@ -195,7 +184,6 @@ Sample snippet (output.csv):
 pid,name,pledge,unveil,wxneeded,chrooted,context
 19286,opensec,0,0,0,0,NATIVE
 85953,firefox,1,0,0,0,NATIVE
-...
 ```
 
 ### JSON Export
