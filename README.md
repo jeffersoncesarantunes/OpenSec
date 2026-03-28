@@ -80,14 +80,14 @@ The tool does not:
 ## ● Example Output
 
 ```text
-PID      PROCESS           PLEDGE          UNVEIL          CONTEXT
+PID      PROCESS          PLEDGE          UNVEIL          CONTEXT
 --------------------------------------------------------------------
-89905    opensec           NONE            NONE            NATIVE
-80996    ksh               ACTIVE          NONE            NATIVE
-96837    xfce4-terminal    NONE            NONE            NATIVE
-20033    firefox           ACTIVE          NONE            NATIVE
-18100    firefox           NONE            NONE            NATIVE
-79750    accounts-daemon   NONE            NONE            NATIVE
+89905    opensec          NONE            NONE            NATIVE
+80996    ksh              ACTIVE          NONE            NATIVE
+96837    xfce4-terminal   NONE            NONE            NATIVE
+20033    firefox          ACTIVE          NONE            NATIVE
+18100    firefox          NONE            NONE            NATIVE
+79750    accounts-daemon  NONE            NONE            NATIVE
 ```
 
 *Output reflects kernel-reported mitigation state only.*
@@ -122,27 +122,6 @@ OpenSec is built for stability and forensic neutrality:
 - No execution state modification
 - Graceful handling of restricted entries
 
-## ● Investigation Workflow
-
-After identifying processes without active mitigations, analysts may proceed with:
-
-```bash
-# Syscall auditing
-ktrace -p [PID] && kdump
-```
-
-```bash
-# File descriptor inspection
-fstat -p [PID]
-```
-
-```bash
-# Binary verification
-sha256 /path/to/binary
-``` 
-
-OpenSec serves as a mitigation visibility layer within a broader forensic workflow.
-
 ## ● Deployment
 
 **Requirements:**
@@ -162,15 +141,17 @@ cd OpenSec
 # Build (clean old binaries first)
 make clean && make
 
-# Standard execution
+# Standard execution (Requires privileges to access /dev/kmem)
 doas ./bin/opensec
 
 # Silent mode (Export only, no terminal pollution)
 doas ./bin/opensec --format json --quiet
 doas ./bin/opensec --format csv --quiet
 
-# Integrity audit
-doas ./bin/opensec --check-integrity
+# Post-Analysis (Verifying generated reports with system tools)
+sha256 output.json
+hexdump -C output.csv | head -n 5
+sed 's/"//g' output.csv | column -t -s ','
 ``` 
 
 ## ● Repository Structure
@@ -246,29 +227,44 @@ Sample snippet (output.json):
 
 - Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only.
 
-## ● Integrity Verification
+## ● Post-Analysis & Investigation
 
-OpenSec can verify the integrity of critical system binaries by comparing their current SHA256 hashes against a trusted baseline.
+OpenSec is designed to integrate with native OpenBSD forensic tools. After identifying a process with suspicious mitigations (e.g., NONE in pledge/unveil), you can proceed with a deeper audit:
 
-### 1. Create a Baseline
-Generate a `baseline.json` file in a known secure state:
+### 1. Data Integrity & Visualization
 
-```json
-{
-  "/bin/ls" : "$(sha256 -q /bin/ls)",
-  "/usr/bin/ssh" : "$(sha256 -q /usr/bin/ssh)",
-  "/usr/bin/doas" : "$(sha256 -q /usr/bin/doas)"
-}
-```
+Verify that your reports haven't been tampered with and transform raw CSV data into a readable security dashboard:
 
-### 2. Audit Integrity
-Run the audit against your baseline:
-
+# Verify report integrity
 ```bash
-doas ./bin/opensec --check-integrity
+sha256 output.json
 ```
 
-**Note:** Use the --quiet flag to suppress output unless a mismatch is found (ideal for cron jobs).
+# View as a tabulated dashboard
+```bash
+sed 's/"//g' output.csv | column -t -s ','
+```
+
+### 2. Deep Binary & Syscall Audit
+
+Investigate the binary on disk and trace its real-time behavior to understand why mitigations are missing:
+
+# Verify the binary on disk (Example follows the author's local environment)
+```bash
+sha256 /usr/local/bin/firefox
+```
+
+# Real-time syscall auditing
+```bash
+doas ktrace -p [PID] && kdump | head -n 40
+```
+
+# File descriptor inspection
+```bash
+fstat -p [PID]
+```
+
+**Note:**The binary path /usr/local/bin/firefox is an example. Replace it with any process identified by OpenSec during your audit.
 
 ## ● Tech Stack
 
