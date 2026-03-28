@@ -237,12 +237,12 @@ OpenSec is designed to integrate with native OpenBSD forensic tools. After ident
 
 Verify that your reports haven't been tampered with and transform raw CSV data into a readable security dashboard:
 
-# Verify report integrity
+Verify report integrity
 ```bash
 sha256 output.json
 ```
 
-# View as a tabulated dashboard
+View as a tabulated dashboard
 ```bash
 sed 's/"//g' output.csv | column -t -s ','
 ```
@@ -251,17 +251,17 @@ sed 's/"//g' output.csv | column -t -s ','
 
 Investigate the binary on disk and trace its real-time behavior to understand why mitigations are missing:
 
-# Verify the binary on disk (Example follows the author's local environment)
+Verify the binary on disk (Example follows the author's local environment)
 ```bash
 sha256 /usr/local/bin/firefox
 ```
 
-# Real-time syscall auditing
+Real-time syscall auditing
 ```bash
 doas ktrace -p [PID] && kdump | head -n 40
 ```
 
-# File descriptor inspection
+File descriptor inspection
 ```bash
 fstat -p [PID]
 ```
