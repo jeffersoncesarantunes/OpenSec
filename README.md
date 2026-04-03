@@ -8,6 +8,8 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 ![Version](https://img.shields.io/badge/Version-1.0.0-333333?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-00FF41?style=flat-square)
 
+---
+
 ## ● Project Information
 
 - **Project:** OpenSec (Open Security Auditor)
@@ -15,6 +17,8 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 - **License:** MIT
 - **Version:** 1.0.0
 - **Description:** Passive kernel-state mitigation auditing tool for OpenBSD.
+
+---
 
 ## ● Etymology & Origin
 
@@ -25,25 +29,29 @@ Open represents more than free software. It stands for transparency, auditabilit
 OpenSec reflects the principle that security tools must be inspectable, minimal, and free from hidden logic.  
 It is security through clarity.
 
+---
+
 ## ● Overview
 
 OpenSec is a minimal forensic utility designed to audit process-level mitigation mechanisms on OpenBSD.
 
 It inspects kernel-exposed process metadata through:
 
-    kvm(3)
-    struct kinfo_proc (kernel process table)
+- `kvm(3)`
+- `struct kinfo_proc`
 
 The tool evaluates whether active processes enforce core security primitives such as:
 
-    pledge(2)
-    unveil(2)
+- `pledge(2)`
+- `unveil(2)`
 
 Additionally, it inspects kernel metadata that may indicate W^X enforcement behavior.
 
 Classification is derived strictly from kernel-reported state.
 
 OpenSec does not perform tracing, behavioral inference, or runtime instrumentation.
+
+---
 
 ## ● Why
 
@@ -56,6 +64,8 @@ OpenSec provides:
 - Hardening validation support
 - Live forensic triage assistance
 - Security posture verification
+
+---
 
 ## ● How It Works
 
@@ -77,6 +87,8 @@ The tool does not:
 - Suspend execution
 - Instrument binaries
 
+---
+
 ## ● Example Output
 
 ```text
@@ -92,26 +104,32 @@ PID      PROCESS          PLEDGE          UNVEIL          CONTEXT
 
 *Output reflects kernel-reported mitigation state only.*
 
+---
+
 ## ● Project in Action
 
-![Initial Scan](./Imagens/opensec1.png)
-*1- Build Process and Initialization: Environment preparation and initial active kernel scanning.*
+![Initial Scan](./Imagens/opensec1.png)  
+*1 - Build Process and Initialization: Environment preparation and initial active kernel scanning.*
 
-![Mitigation Analysis](./Imagens/opensec2.png)
-*2- Silent Execution and Report Generation: Using --quiet and --format flags to generate clean JSON/CSV data.*
+![Mitigation Analysis](./Imagens/opensec2.png)  
+*2 - Silent Execution and Report Generation: Using --quiet and --format flags to generate clean JSON/CSV data.*
 
-![Forensic Summary](./Imagens/opensec3.png)
-*3- Data Integrity and Security Audit: Verifying file hashes with sha256 and inspecting process-level restrictions (pledge, unveil) in a tabulated view.*
+![Forensic Summary](./Imagens/opensec3.png)  
+*3 - Data Integrity and Security Audit: Verifying file hashes with sha256 and inspecting process-level restrictions (pledge, unveil) in a tabulated view.*
+
+---
 
 ## ● Features
 
-- Kernel process table inspection via `libkvm`
+- Kernel process table inspection via \`libkvm\`
 - `pledge(2)` enforcement detection
 - `unveil(2)` state reporting
 - W^X-related enforcement indicators
 - Deterministic classification model
 - Clean terminal output
 - Minimal runtime footprint
+
+---
 
 ## ● Operational Integrity
 
@@ -122,14 +140,18 @@ OpenSec is built for stability and forensic neutrality:
 - No execution state modification
 - Graceful handling of restricted entries
 
+---
+
 ## ● Deployment
 
-**Requirements:**
+### Requirements
 
 - OpenBSD (release or -current)
 - libkvm
 - BSD make
 - doas or root privileges
+
+---
 
 ## ● Build and Run
 
@@ -138,35 +160,39 @@ OpenSec is built for stability and forensic neutrality:
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 
-# Build (clean old binaries first)
+# # Build the project
 make clean && make
 
-# Standard execution (Requires privileges to access /dev/kmem)
+# Standard execution
 doas ./bin/opensec
 
-# Silent mode (Export only, no terminal pollution)
+# Silent mode
 doas ./bin/opensec --format json --quiet
 doas ./bin/opensec --format csv --quiet
 
-# Post-Analysis (Verifying generated reports with system tools)
+# Post-Analysis
 sha256 output.json
 hexdump -C output.csv | head -n 5
-sed 's/"//g' output.csv | column -t -s ','
-``` 
+sed 's/\"//g' output.csv | column -t -s ','
+```
+
+---
 
 ## ● Repository Structure
 
 ```text
-├── bin/                # Compiled binaries (locally built)
-├── docs/               # Technical specs & Security model
-├── examples/           # Sample outputs (JSON/CSV) for testing
-├── Imagens/            # Execution flow screenshots
-├── include/            # Header files (opensec.h)
-├── src/                # Core engine logic (engine.c, main.c)
-├── LICENSE             # MIT License terms
-├── Makefile            # POSIX compliant build system
-└── README.md           # Project entry point
+├── bin/
+├── docs/
+├── examples/
+├── Imagens/
+├── include/
+├── src/
+├── LICENSE
+├── Makefile
+└── README.md
 ```
+
+---
 
 ## ● Export Formats
 
@@ -174,12 +200,12 @@ OpenSec can generate structured output for further analysis or reporting.
 
 ### CSV Export
 
-Ideal for spreadsheet analysis or quick terminal filtering:
 ```bash
 doas ./bin/opensec --format csv --quiet
 ```
 
-Sample snippet (output.csv):
+Sample snippet (output.json):
+
 ```csv
 pid,name,pledge,unveil,wxneeded,chrooted,context
 19286,opensec,0,0,0,0,NATIVE
@@ -187,11 +213,13 @@ pid,name,pledge,unveil,wxneeded,chrooted,context
 ```
 
 ### JSON Export
+
 ```bash
 doas ./bin/opensec --format json --quiet
 ```
 
-Sample snippet (output.json):
+Sample snippet:
+
 ```json
 [
   {
@@ -215,46 +243,51 @@ Sample snippet (output.json):
 ]
 ```
 
-**Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only. Use the `--quiet` flag to suppress standard output during file generation.
+**Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only. Use `--quiet` to suppress standard output during file generation.
+
+---
 
 ## ● Post-Analysis & Investigation
 
-OpenSec is designed to integrate with native OpenBSD forensic tools. After identifying a process with suspicious mitigations (e.g., NONE in pledge/unveil), you can proceed with a deeper audit:
+After identifying suspicious processes, analysts may proceed with deeper inspection.
 
 ### 1. Data Integrity & Visualization
 
-Verify that your reports haven't been tampered with and transform raw CSV data into a readable security dashboard:
+#### Verify report integrity
 
-Verify report integrity
 ```bash
 sha256 output.json
 ```
 
-View as a tabulated dashboard
+#### View as table
+
 ```bash
-sed 's/"//g' output.csv | column -t -s ','
+sed 's/\"//g' output.csv | column -t -s ','
 ```
 
 ### 2. Deep Binary & Syscall Audit
 
-Investigate the binary on disk and trace its real-time behavior to understand why mitigations are missing:
+#### Verify binary
 
-Verify the binary on disk (Example follows the author's local environment)
 ```bash
 sha256 /usr/local/bin/firefox
 ```
 
-Real-time syscall auditing
+#### Syscall tracing
+
 ```bash
 doas ktrace -p [PID] && kdump | head -n 40
 ```
 
-File descriptor inspection
+#### File descriptors
+
 ```bash
 fstat -p [PID]
 ```
 
-**Note:**The binary path /usr/local/bin/firefox is an example. Replace it with any process identified by OpenSec during your audit.
+**Note:** Replace the example path with the process identified during analysis.
+
+---
 
 ## ● Tech Stack
 
@@ -264,16 +297,21 @@ fstat -p [PID]
 - **Build Tool:** BSD make
 - **Target Platform:** OpenBSD
 
+---
+
 ## ● Roadmap
 
 - [x] Core mitigation auditing engine
 - [x] pledge(2) / unveil(2) visibility
 - [x] Kernel state extraction via libkvm(3)
-- [x] Structured export formats (JSON / CSV)
-- [x] Integration with sha256 for binary integrity validation
-- [x] Silent mode for automation (--quiet)
+- [x] Structured export formats
+- [x] Integrity validation with sha256
+- [x] Silent mode (--quiet)
 - [ ] Fine-grained W^X violation detection
+
+---
 
 ## ● License
 
-Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
+Distributed under the MIT License. See LICENSE for details.
+
