@@ -1,4 +1,4 @@
-🐡 OpenSec
+# 🐡 OpenSec
 
 Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, and W^X visibility.
 
