@@ -194,98 +194,50 @@ sed 's/\"//g' output.csv | column -t -s ','
 
 ---
 
-## ● Export Formats
+## ● Forensic Export & Post-Analysis
 
-OpenSec can generate structured output for further analysis or reporting.
+OpenSec supports structured data export for seamless integration with external forensic tools and security pipelines.
 
-### CSV Export
+### 1. Generating Reports
+Use the `--format` flag combined with `--quiet` to generate clean data files for auditing.
+
+- **JSON:**
+```bash 
+doas ./bin/opensec --format json --quiet > audit.json
+```
+
+- **CSV:** 
+```bash
+doas ./bin/opensec --format csv --quiet > audit.csv
+```
+
+### 2. Integrity & Data Visualization
+Once exported, verify the integrity of the audit or visualize it as a formatted table:
 
 ```bash
-doas ./bin/opensec --format csv --quiet
+# Verify report integrity (SHA256 Hash)
+sha256 audit.json
 ```
-
-Sample snippet (output.json):
-
-```csv
-pid,name,pledge,unveil,wxneeded,chrooted,context
-19286,opensec,0,0,0,0,NATIVE
-85953,firefox,1,0,0,0,NATIVE
-```
-
-### JSON Export
 
 ```bash
-doas ./bin/opensec --format json --quiet
+# View CSV as a formatted table in the terminal
+sed 's/\"//g' audit.csv | column -t -s ','
 ```
 
-Sample snippet:
+### 3. Deep Binary & Syscall Audit
 
-```json
-[
-  {
-    "pid": 19286,
-    "name": "opensec",
-    "pledge": false,
-    "unveil": false,
-    "wxneeded": false,
-    "chrooted": false,
-    "context": "NATIVE"
-  },
-  {
-    "pid": 85953,
-    "name": "firefox",
-    "pledge": true,
-    "unveil": false,
-    "wxneeded": false,
-    "chrooted": false,
-    "context": "NATIVE"
-  }
-]
-```
+After identifying suspicious processes, proceed with native OpenBSD forensic tools for deeper investigation:
 
-**Note:** Choose the format with `--format json` or `--format csv`. If omitted, OpenSec prints output to the terminal only. Use `--quiet` to suppress standard output during file generation.
-
----
-
-## ● Post-Analysis & Investigation
-
-After identifying suspicious processes, analysts may proceed with deeper inspection.
-
-### 1. Data Integrity & Visualization
-
-#### Verify report integrity
-
-```bash
-sha256 output.json
-```
-
-#### View as table
-
-```bash
-sed 's/\"//g' output.csv | column -t -s ','
-```
-
-### 2. Deep Binary & Syscall Audit
-
-#### Verify binary
-
-```bash
+# Verify binary integrity of the suspicious application
 sha256 /usr/local/bin/firefox
-```
 
-#### Syscall tracing
-
-```bash
+# Syscall tracing (Capture 30-60s of behavior)
 doas ktrace -p [PID] && kdump | head -n 40
-```
 
-#### File descriptors
+# Inspect open file descriptors and active sockets
+doas fstat -p [PID]
 
-```bash
-fstat -p [PID]
-```
-
-**Note:** Replace the example path with the process identified during analysis.
+*Note: Replace [PID] and binary paths with the specific data identified during your audit.*
 
 ---
 
