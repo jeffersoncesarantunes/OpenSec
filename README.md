@@ -1,11 +1,10 @@
-# 🐡 OpenSec
+🐡 OpenSec
 
 Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, and W^X visibility.
 
 [![Platform-OpenBSD](https://img.shields.io/badge/Platform-OpenBSD-FBD12B?style=flat-square&logo=openbsd&logoColor=black)](https://www.openbsd.org)
 [![Language-C11](https://img.shields.io/badge/Language-C11-1793D1?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE)
-![Version](https://img.shields.io/badge/Version-1.0.0-333333?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-00FF41?style=flat-square)
 
 ---
