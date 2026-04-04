@@ -239,12 +239,14 @@ Note: Replace [PID] and paths with values obtained during analysis.
 ## ● Roadmap
 
 - [x] Core mitigation auditing engine
-- [x] pledge(2) / unveil(2) visibility
-- [x] Kernel state extraction via libkvm(3)
-- [x] Structured export formats
-- [x] Integrity validation with sha256
-- [x] Silent mode (--quiet)
-- [ ] Fine-grained W^X violation detection
+- [x] `pledge(2)` / `unveil(2)` visibility
+- [x] Kernel state extraction via `libkvm(3)`
+- [x] Structured export formats (JSON/CSV)
+- [x] Integrity validation with `sha256`
+- [x] Silent mode (`--quiet`)
+- [ ] Active PID filtering support (`--pid`)
+- [ ] Parent-Process (PPID) relationship mapping
+- [ ] Automated security score per process
 
 ---
 
