@@ -311,7 +311,14 @@ fstat -p [PID]
 
 ---
 
+## ● Documentation
+
+- [Full Documentation](./docs/)
+- [Security Model](./docs/SECURITY_MODEL.md)
+- [Benchmarks](./docs/BENCHMARKS.md)
+
+---
+
 ## ● License
 
-Distributed under the MIT License. See LICENSE for details.
-
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
