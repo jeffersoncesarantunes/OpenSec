@@ -12,7 +12,7 @@ OpenSec is designed to be a lightweight auditor. By interfacing directly with th
 | :--- | :--- | :--- |
 | **CPU Usage** | < 0.1% | Negligible during active scans. |
 | **RAM (RSS)** | ~1.2 MB | Fixed footprint (no dynamic memory leaks). |
-| **I/O Impact** | Zero | No disk writes during audit (direct RAM access). |
+| **I/O Impact** | Negligible | No disk writes; read-only kernel memory access. |
 
 ---
 
@@ -33,11 +33,11 @@ Unlike debuggers or traditional security scanners, OpenSec **does not use ptrace
 ## 3. Safety & Reliability
 
 ### 3.1 Kernel State Snapshot
-OpenSec utilizes the `KERN_PROC_ALL` flag. This provides an atomic-like snapshot of the process table, ensuring that even if processes are spawning rapidly, the tool remains stable and reports consistent data.
+OpenSec utilizes the `KERN_PROC_ALL` flag. This provides a consistent snapshot of the process table at query time, ensuring stable and reliable reporting even under high process churn.
 
 ### 3.2 System Freeze Prevention
 As detailed in the Security Model, OpenSec is programmed to handle locked or unresponsive PIDs. 
 * **Technical Note:** By choosing to ignore non-responsive entries (Option 3), the tool releases kernel handles immediately, ensuring the operating system's scheduler remains unaffected.
 
 ---
-*OpenSec: High-performance security auditing with zero footprint.*
+*OpenSec: High-performance security auditing with minimal footprint.*

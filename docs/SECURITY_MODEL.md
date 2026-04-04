@@ -9,7 +9,7 @@ This document details the architectural logic of OpenSec and provides a formal g
 OpenSec is built on the **"Verify, then Trust"** principle. OpenSec identifies the "gap" between kernel capability and application adoption.
 
 ### 1.1 The "Naked Binary" Problem
-A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Binary," providing an unrestricted path to the Kernel API and the global Filesystem.
+A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Binary," providing unrestricted access to system calls and global filesystem scope.
 
 ---
 
@@ -31,8 +31,8 @@ During development and validation, tests were conducted on **Kitty** and **xfce4
 ## 3. Post-Audit Investigation Workflow
 
 ### Step 1: Behavioral Capture & Dump Analysis
-* **Live Trace:** `doas ktrace -idp [PID]` (Capture syscalls for 30-60s).
-* **Binary Integrity:** `sha256sum /path/to/binary` (Check for tampering).
+* **Live Trace:** `doas ktrace -p [PID]` (Capture syscalls for 30-60s).
+* **Binary Integrity:** `sha256 /path/to/binary` (Check for tampering).
 * **Static Analysis:** `strings /path/to/binary | less` (Search for hardcoded IPs/URLs).
 * **Hex Inspection:** `hexdump -C /path/to/binary` (Investigate data offsets).
 
@@ -45,7 +45,7 @@ During development and validation, tests were conducted on **Kitty** and **xfce4
 ## 4. Operational Safety & Resolution
 
 ### 4.1 Handling "ACTION REQUIRED"
-When prompted during an audit, selecting **Option 3 (Ignore)** is the recommended action. This prevents the auditor from waiting on a non-responsive PID, avoiding a potential system freeze.
+When prompted during an audit, selecting **Option 3 (Ignore)** is the recommended action. This prevents the auditor from waiting on a non-responsive PID, avoiding potential system instability.
 
 ### 4.2 Hardening Hierarchy
 1. **Code Patching:** Implement `pledge()` and `unveil()` based on gathered data.
