@@ -160,20 +160,15 @@ OpenSec is built for stability and forensic neutrality:
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 
-# # Build the project
+# Build the project
 make clean && make
 
 # Standard execution
 doas ./bin/opensec
 
-# Silent mode
+# Generate structured reports
 doas ./bin/opensec --format json --quiet
 doas ./bin/opensec --format csv --quiet
-
-# Post-Analysis
-sha256 output.json
-hexdump -C output.csv | head -n 5
-sed 's/\"//g' output.csv | column -t -s ','
 ```
 
 ---
@@ -196,48 +191,49 @@ sed 's/\"//g' output.csv | column -t -s ','
 
 ## ● Forensic Export & Post-Analysis
 
-OpenSec supports structured data export for seamless integration with external forensic tools and security pipelines.
+OpenSec supports structured data export for seamless integration with forensic workflows and security analysis pipelines.
 
 ### 1. Generating Reports
-Use the `--format` flag combined with `--quiet` to generate clean data files for auditing.
 
-- **JSON:**
-```bash 
-doas ./bin/opensec --format json --quiet > audit.json
-```
+Use the --format flag combined with --quiet to generate clean data files for auditing.
 
-- **CSV:** 
 ```bash
-doas ./bin/opensec --format csv --quiet > audit.csv
+doas ./bin/opensec --format json --quiet
+doas ./bin/opensec --format csv --quiet
 ```
+
+Generated files:
+- output.json
+- output.csv
+
+---
 
 ### 2. Integrity & Data Visualization
-Once exported, verify the integrity of the audit or visualize it as a formatted table:
 
 ```bash
-# Verify report integrity (SHA256 Hash)
-sha256 audit.json
+# Verify report integrity
+sha256 output.json
+
+# View CSV as a formatted table
+sed 's/"//g' output.csv | column -t -s ','
 ```
 
-```bash
-# View CSV as a formatted table in the terminal
-sed 's/\"//g' audit.csv | column -t -s ','
-```
+---
 
 ### 3. Deep Binary & Syscall Audit
 
-After identifying suspicious processes, proceed with native OpenBSD forensic tools for deeper investigation:
-
-# Verify binary integrity of the suspicious application
+```bash
+# Verify binary integrity
 sha256 /usr/local/bin/firefox
 
-# Syscall tracing (Capture 30-60s of behavior)
+# Capture syscall activity
 doas ktrace -p [PID] && kdump | head -n 40
 
-# Inspect open file descriptors and active sockets
+# Inspect file descriptors and sockets
 doas fstat -p [PID]
+```
 
-*Note: Replace [PID] and binary paths with the specific data identified during your audit.*
+Note: Replace [PID] and paths with values obtained during analysis.
 
 ---
 
