@@ -313,12 +313,14 @@ fstat -p [PID]
 
 ## ● Documentation
 
-- [Full Documentation](./docs/)
-- [Security Model](./docs/SECURITY_MODEL.md)
-- [Benchmarks](./docs/BENCHMARKS.md)
+[![Docs-Full](https://img.shields.io/badge/Documentation-Full_Guide-00599C?style=flat-square&logo=gitbook&logoColor=white)](./docs/)
+[![Docs-Security](https://img.shields.io/badge/Security-Model-CC0000?style=flat-square&logo=shisno&logoColor=white)](./docs/SECURITY_MODEL.md)
+[![Docs-Benchmarks](https://img.shields.io/badge/Performance-Benchmarks-444444?style=flat-square&logo=speedtest&logoColor=white)](./docs/BENCHMARKS.md)
 
 ---
 
 ## ● License
 
-This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+[![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=opensourceinitiative&logoColor=white)](./LICENSE)
+
+*This project is licensed under the MIT License.*
