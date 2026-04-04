@@ -10,16 +10,6 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 
 ---
 
-## ● Project Information
-
-- **Project:** OpenSec (Open Security Auditor)
-- **Author:** Jefferson Cesar Antunes
-- **License:** MIT
-- **Version:** 1.0.0
-- **Description:** Passive kernel-state mitigation auditing tool for OpenBSD.
-
----
-
 ## ● Etymology & Origin
 
 The name OpenSec was born from the fusion of Open and Security, directly inspired by the OpenBSD philosophy.
