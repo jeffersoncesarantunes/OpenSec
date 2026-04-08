@@ -5,7 +5,9 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 [![Platform-OpenBSD](https://img.shields.io/badge/Platform-OpenBSD-FBD12B?style=flat-square&logo=openbsd&logoColor=black)](https://www.openbsd.org)
 [![Language-C11](https://img.shields.io/badge/Language-C11-1793D1?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE)
-![Status](https://img.shields.io/badge/Status-Active-00FF41?style=flat-square)
+[![Status](https://img.shields.io/badge/Status-Active-00FF41?style=flat-square)](#-roadmap)
+[![Tested-On](https://img.shields.io/badge/Tested%20on-OpenBSD%207.6-blue?style=flat-square)](https://www.openbsd.org/76.html)
+[![Domain](https://img.shields.io/badge/Domain-Digital%20Forensics-lightgrey?style=flat-square)](./docs/SECURITY_MODEL.md)
 
 ---
 
