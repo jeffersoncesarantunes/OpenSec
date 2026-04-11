@@ -169,10 +169,17 @@ doas ./bin/opensec --format csv --quiet
 ```text
 ├── bin/
 ├── docs/
-├── examples/
+│   ├── benchmarks.md
+│   └── security_model.md
 ├── Imagens/
+│   ├── opensec1.png
+│   ├── opensec2.png
+│   └── opensec3.png
 ├── include/
 ├── src/
+│   ├── engine.c
+│   └── main.c
+├── .gitignore
 ├── LICENSE
 ├── Makefile
 └── README.md
