@@ -254,7 +254,7 @@ Note: Replace [PID] and paths with values obtained during analysis.
 
 ## ● Documentation
 
-[![Docs-Security](https://img.shields.io/badge/Security--Model-CC0000?style=flat-square&logo=linux&logoColor=white)](./docs/SECURITY_MODEL.md)
+[![Docs-Security](https://img.shields.io/badge/Security--Model-004080?style=flat-square&logo=openbsd&logoColor=white)](./docs/SECURITY_MODEL.md)
 [![Docs-Benchmarks](https://img.shields.io/badge/Performance--Benchmarks-444444?style=flat-square&logo=speedtest&logoColor=white)](./docs/BENCHMARKS.md)
 
 ---
