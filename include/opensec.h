@@ -1,13 +1,20 @@
 #ifndef OPENSEC_H
 #define OPENSEC_H
 
+#include <sys/types.h>
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <sys/user.h>
+#include <sys/proc.h>
+#include <sys/vnode.h>
+#include <sys/mman.h>
 #include <kvm.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <unistd.h>
 
 typedef struct {
     pid_t pid;
@@ -26,5 +33,7 @@ typedef struct {
 } SystemStats;
 
 ProcessInfo* get_all_processes(int *count);
+void audit_process_memory(int pid);
+void audit_self(void);
 
 #endif

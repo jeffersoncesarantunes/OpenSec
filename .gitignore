@@ -23,3 +23,5 @@ bin/
 *.json
 *.csv
 opensec
+ktrace.out
+*.core

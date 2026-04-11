@@ -1,7 +1,15 @@
-#include "opensec.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/mman.h>
+#include <kvm.h>
 #include <fcntl.h>
-#include <limits.h>
-#include <sys/proc.h>
+#include <errno.h>
+#include "opensec.h"
 
 #ifndef PS_WXNEEDED
 #define PS_WXNEEDED 0x00040000
@@ -35,22 +43,75 @@ ProcessInfo* get_all_processes(int *count) {
     for (int i = 0; i < nprocs; i++) {
         list[i].pid = kp[i].p_pid;
         strncpy(list[i].name, kp[i].p_comm, sizeof(list[i].name));
-
-        if (kp[i].p_psflags & PS_PLEDGE) 
-            list[i].has_pledge = 1;
-        
-        /* 0x1000000 is the internal kernel flag for active unveil(2) */
-        if (kp[i].p_psflags & 0x1000000) 
-            list[i].has_unveil = 1;
-
-        if (kp[i].p_psflags & PS_WXNEEDED) 
-            list[i].wxneeded = 1;
-
-        if (kp[i].p_flag & P_CHROOT) 
-            list[i].chrooted = 1;
+        list[i].has_pledge = (kp[i].p_psflags & PS_PLEDGE) ? 1 : 0;
+        list[i].has_unveil = (kp[i].p_psflags & 0x1000000) ? 1 : 0;
+        list[i].wxneeded = (kp[i].p_psflags & PS_WXNEEDED) ? 1 : 0;
+        list[i].chrooted = (kp[i].p_flag & P_CHROOT) ? 1 : 0;
     }
 
     *count = nprocs;
     kvm_close(kd);
     return list;
+}
+
+void audit_process_memory(int pid) {
+    int mib[3];
+    struct kinfo_vmentry *vme = NULL;
+    size_t size;
+    int i, nentries;
+
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC_VMMAP;
+    mib[2] = pid;
+
+    if (sysctl(mib, 3, NULL, &size, NULL, 0) == -1) {
+        if (errno == EINVAL) {
+            printf("\n" "\x1b[33m" "[!] VMMAP Access Denied: Kernel hardening is active for PID %d." "\x1b[0m" "\n", pid);
+            printf("    (ASLR protection prevents memory map inspection via sysctl)\n");
+        } else {
+            fprintf(stderr, "[-] Kernel error for PID %d: %s\n", pid, strerror(errno));
+        }
+        return;
+    }
+
+    size += sizeof(struct kinfo_vmentry) * 10;
+    vme = malloc(size);
+    if (!vme) return;
+
+    if (sysctl(mib, 3, vme, &size, NULL, 0) == -1) {
+        free(vme);
+        return;
+    }
+
+    nentries = size / sizeof(struct kinfo_vmentry);
+
+    printf("\n[+] Fine-grained W^X Audit for PID %d\n", pid);
+    printf("    %-18s %-18s %-10s\n", "START ADDR", "END ADDR", "PROTECTION");
+
+    for (i = 0; i < nentries; i++) {
+        if (vme[i].kve_start == 0 && vme[i].kve_end == 0) continue;
+
+        char prot_str[4] = "---";
+        if (vme[i].kve_protection & PROT_READ)  prot_str[0] = 'r';
+        if (vme[i].kve_protection & PROT_WRITE) prot_str[1] = 'w';
+        if (vme[i].kve_protection & PROT_EXEC)  prot_str[2] = 'x';
+
+        if ((vme[i].kve_protection & (PROT_WRITE | PROT_EXEC)) == (PROT_WRITE | PROT_EXEC)) {
+            printf("    0x%016llx-0x%016llx \033[31m%s [VIOLATION]\033[0m\n", 
+                   (unsigned long long)vme[i].kve_start, 
+                   (unsigned long long)vme[i].kve_end, 
+                   prot_str);
+        } else {
+            printf("    0x%016llx-0x%016llx %s\n", 
+                   (unsigned long long)vme[i].kve_start, 
+                   (unsigned long long)vme[i].kve_end, 
+                   prot_str);
+        }
+    }
+
+    free(vme);
+}
+
+void audit_self(void) {
+    audit_process_memory(getpid());
 }
