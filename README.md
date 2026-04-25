@@ -155,11 +155,11 @@ cd OpenSec
 make clean && make
 
 # Standard execution
-doas ./bin/opensec
+doas ./opensec
 
 # Generate structured reports
-doas ./bin/opensec --format json --quiet
-doas ./bin/opensec --format csv --quiet
+doas ./opensec --format json --quiet
+doas ./opensec --format csv --quiet
 ```
 
 ---
