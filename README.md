@@ -13,12 +13,11 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 
 ## ● Etymology & Origin
 
-The name OpenSec was born from the fusion of Open and Security, directly inspired by the OpenBSD philosophy.
+The name OpenSec comes from the fusion of *Open* and *Security*, directly inspired by the OpenBSD philosophy.
 
-Open represents more than free software. It stands for transparency, auditability, and deterministic security design.
+“Open” here is not just about source code — it reflects transparency, auditability, and predictable system behavior.
 
-OpenSec reflects the principle that security tools must be inspectable, minimal, and free from hidden logic.  
-It is security through clarity.
+OpenSec follows the idea that security tools should be minimal, inspectable, and free from hidden logic.
 
 ---
 
@@ -26,35 +25,32 @@ It is security through clarity.
 
 OpenSec is a minimal forensic utility designed to audit process-level mitigation mechanisms on OpenBSD.
 
-It inspects kernel-exposed process metadata through:
+It inspects kernel-exposed process metadata using:
 
-- `kvm(3)`
-- `struct kinfo_proc`
+* `kvm(3)`
+* `struct kinfo_proc`
 
 The tool evaluates whether active processes enforce core security primitives such as:
 
-- `pledge(2)`
-- `unveil(2)`
+* `pledge(2)`
+* `unveil(2)`
 
-Additionally, it inspects kernel metadata that may indicate W^X enforcement behavior.
+It also inspects kernel metadata related to W^X enforcement behavior.
 
-Classification is derived strictly from kernel-reported state.
-
-OpenSec does not perform tracing, behavioral inference, or runtime instrumentation.
+All classification is based strictly on kernel-reported state.
 
 ---
 
 ## ● Why
 
-OpenBSD provides strong built-in mitigation primitives. However, visibility into which processes actively enforce them is not centralized.
+OpenBSD provides strong built-in mitigations, but visibility into which processes actively enforce them is not centralized.
 
 OpenSec provides:
 
-- Deterministic mitigation visibility
-- System-wide process auditing
-- Hardening validation support
-- Live forensic triage assistance
-- Security posture verification
+* Clear mitigation visibility per process
+* System-wide auditing
+* Hardening validation support
+* Live forensic triage assistance
 
 ---
 
@@ -62,21 +58,13 @@ OpenSec provides:
 
 OpenSec interfaces with **libkvm** to access the kernel process table in read-only mode.
 
-For each active process, it evaluates fields within **struct kinfo_proc** to determine:
+For each process, it evaluates fields within **struct kinfo_proc** to determine:
 
-- Whether pledge restrictions are active
-- Whether unveil restrictions are present
-- Whether memory protection aligns with W^X principles
+* pledge restriction state
+* unveil restriction state
+* indicators of W^X enforcement
 
-All inspection is passive.
-
-The tool does not:
-
-- Attach via ptrace
-- Inject code
-- Modify process memory
-- Suspend execution
-- Instrument binaries
+All inspection is passive and does not interfere with execution.
 
 ---
 
@@ -93,43 +81,42 @@ PID      PROCESS          PLEDGE          UNVEIL          CONTEXT
 79750    accounts-daemon  NONE            NONE            NATIVE
 ```
 
-*Output reflects kernel-reported mitigation state only.*
+*Output reflects kernel-reported mitigation state.*
 
 ---
 
 ## ● Project in Action
 
-![Initial Scan](./Imagens/opensec1.png)  
-*1 - Build Process and Initialization: Environment preparation and initial active kernel scanning.*
+![Initial Scan](./Imagens/opensec1.png)
+*1 - Build and initial kernel scan.*
 
-![Mitigation Analysis](./Imagens/opensec2.png)  
-*2 - Silent Execution and Report Generation: Using --quiet and --format flags to generate clean JSON/CSV data.*
+![Mitigation Analysis](./Imagens/opensec2.png)
+*2 - Structured output generation using --quiet and --format.*
 
-![Forensic Summary](./Imagens/opensec3.png)  
-*3 - Data Integrity and Security Audit: Verifying file hashes with sha256 and inspecting process-level restrictions (pledge, unveil) in a tabulated view.*
+![Forensic Summary](./Imagens/opensec3.png)
+*3 - Validation of process-level mitigation data and integrity checks.*
 
 ---
 
 ## ● Features
 
-- Kernel process table inspection via \`libkvm\`
-- `pledge(2)` enforcement detection
-- `unveil(2)` state reporting
-- W^X-related enforcement indicators
-- Deterministic classification model
-- Clean terminal output
-- Minimal runtime footprint
+* Kernel process table inspection via `libkvm`
+* `pledge(2)` enforcement detection
+* `unveil(2)` state visibility
+* W^X-related indicators
+* Deterministic classification
+* Minimal runtime footprint
 
 ---
 
 ## ● Operational Integrity
 
-OpenSec is built for stability and forensic neutrality:
+OpenSec is designed for safe forensic usage:
 
-- Read-only kernel state access
-- No process interruption
-- No execution state modification
-- Graceful handling of restricted entries
+* Read-only kernel access
+* No process interaction
+* No execution interference
+* Graceful handling of restricted entries
 
 ---
 
@@ -137,10 +124,10 @@ OpenSec is built for stability and forensic neutrality:
 
 ### Requirements
 
-- OpenBSD (release or -current)
-- libkvm
-- BSD make
-- doas or root privileges
+* OpenBSD (release or -current)
+* libkvm
+* BSD make
+* doas or root privileges
 
 ---
 
@@ -151,13 +138,13 @@ OpenSec is built for stability and forensic neutrality:
 git clone https://github.com/jeffersoncesarantunes/OpenSec.git
 cd OpenSec
 
-# Build the project
+# Build
 make clean && make
 
-# Standard execution
+# Run
 doas ./opensec
 
-# Generate structured reports
+# Structured output
 doas ./opensec --format json --quiet
 doas ./opensec --format csv --quiet
 ```
@@ -169,8 +156,8 @@ doas ./opensec --format csv --quiet
 ```text
 ├── bin/
 ├── docs/
-│   ├── benchmarks.md
-│   └── security_model.md
+│   ├── BENCHMARKS.md
+│   └── SECURITY_MODEL.md
 ├── Imagens/
 │   ├── opensec1.png
 │   ├── opensec2.png
@@ -189,85 +176,79 @@ doas ./opensec --format csv --quiet
 
 ## ● Forensic Export & Post-Analysis
 
-OpenSec supports structured data export for seamless integration with forensic workflows and security analysis pipelines.
+OpenSec supports structured output for integration with forensic workflows.
 
-### 1. Generating Reports
-
-Use the --format flag combined with --quiet to generate clean data files for auditing.
+### Generate Reports
 
 ```bash
-doas ./bin/opensec --format json --quiet
-doas ./bin/opensec --format csv --quiet
+doas ./opensec --format json --quiet
+doas ./opensec --format csv --quiet
 ```
 
 Generated files:
-- output.json
-- output.csv
+
+* output.json
+* output.csv
 
 ---
 
-### 2. Integrity & Data Visualization
+### Integrity & Visualization
 
 ```bash
-# Verify report integrity
 sha256 output.json
 
-# View CSV as a formatted table
 sed 's/"//g' output.csv | column -t -s ','
 ```
 
 ---
 
-### 3. Deep Binary & Syscall Audit
+### Deep Analysis
 
 ```bash
-# Verify binary integrity
+# Binary integrity
 sha256 /usr/local/bin/firefox
 
-# Capture syscall activity
-doas ktrace -p [PID] && kdump | head -n 40
+# Syscall tracing
+doas ktrace -p [PID] && doas kdump -f ktrace.out | head -n 40
 
-# Inspect file descriptors and sockets
+# File descriptors
 doas fstat -p [PID]
 ```
-
-Note: Replace [PID] and paths with values obtained during analysis.
 
 ---
 
 ## ● Tech Stack
 
-- **Language:** C (C99/C11 with OpenBSD extensions)
-- **Kernel Interface:** libkvm
-- **Data Source:** struct kinfo_proc
-- **Build Tool:** BSD make
-- **Target Platform:** OpenBSD
+* **Language:** C (C11)
+* **Kernel Interface:** libkvm
+* **Data Source:** struct kinfo_proc
+* **Build Tool:** BSD make
+* **Platform:** OpenBSD
 
 ---
 
 ## ● Roadmap
 
-- [x] Core mitigation auditing engine
-- [x] `pledge(2)` / `unveil(2)` visibility
-- [x] Kernel state extraction via `libkvm(3)`
-- [x] Structured export formats (JSON/CSV)
-- [x] Integrity validation with `sha256`
-- [x] Silent mode (`--quiet`)
-- [ ] Active PID filtering support (`--pid`)
-- [ ] Parent-Process (PPID) relationship mapping
-- [ ] Automated security score per process
+* [x] Core mitigation auditing engine
+* [x] `pledge(2)` / `unveil(2)` visibility
+* [x] Kernel state extraction via `libkvm(3)`
+* [x] JSON/CSV export
+* [x] Silent mode (`--quiet`)
+* [ ] PID filtering (`--pid`)
+* [ ] Parent process mapping (PPID)
+* [ ] Per-process security scoring
 
 ---
 
 ## ● Documentation
 
-[![Docs-Security](https://img.shields.io/badge/Security--Model-004080?style=flat-square&logo=openbsd&logoColor=white)](./docs/SECURITY_MODEL.md)
-[![Docs-Benchmarks](https://img.shields.io/badge/Performance--Benchmarks-444444?style=flat-square&logo=speedtest&logoColor=white)](./docs/BENCHMARKS.md)
+[![Docs-Security](https://img.shields.io/badge/Security--Model-004080?style=flat-square\&logo=openbsd\&logoColor=white)](./docs/SECURITY_MODEL.md)
+[![Docs-Benchmarks](https://img.shields.io/badge/Performance--Benchmarks-444444?style=flat-square\&logo=speedtest\&logoColor=white)](./docs/BENCHMARKS.md)
 
 ---
 
 ## ● License
 
-[![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=opensourceinitiative&logoColor=white)](./LICENSE)
+[![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square\&logo=opensourceinitiative\&logoColor=white)](./LICENSE)
 
 *This project is licensed under the MIT License.*
