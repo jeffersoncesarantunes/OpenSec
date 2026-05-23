@@ -42,6 +42,7 @@ ProcessInfo* get_all_processes(int *count) {
 
     for (int i = 0; i < nprocs; i++) {
         list[i].pid = kp[i].p_pid;
+        list[i].ppid = kp[i].p_ppid;
         strncpy(list[i].name, kp[i].p_comm, sizeof(list[i].name));
         list[i].has_pledge = (kp[i].p_psflags & PS_PLEDGE) ? 1 : 0;
         list[i].has_unveil = (kp[i].p_psflags & 0x1000000) ? 1 : 0;
@@ -49,9 +50,44 @@ ProcessInfo* get_all_processes(int *count) {
         list[i].chrooted = (kp[i].p_flag & P_CHROOT) ? 1 : 0;
     }
 
+    /* Second pass: resolve parent process names */
+    for (int i = 0; i < nprocs; i++) {
+        list[i].ppname[0] = '\0';
+        for (int j = 0; j < nprocs; j++) {
+            if (list[j].pid == list[i].ppid) {
+                strncpy(list[i].ppname, list[j].name, sizeof(list[i].ppname));
+                break;
+            }
+        }
+        if (list[i].ppname[0] == '\0')
+            snprintf(list[i].ppname, sizeof(list[i].ppname), "(kernel/init)");
+    }
+
+    /* Third pass: compute security scores */
+    for (int i = 0; i < nprocs; i++)
+        list[i].score = compute_security_score(&list[i]);
+
     *count = nprocs;
     kvm_close(kd);
     return list;
+}
+
+int compute_security_score(const ProcessInfo *p) {
+    int score = 0;
+
+    /* pledge(2) is the strongest mitigation on OpenBSD */
+    if (p->has_pledge) score += 3;
+
+    /* unveil(2) restricts filesystem visibility */
+    if (p->has_unveil) score += 2;
+
+    /* chroot adds an extra containment layer */
+    if (p->chrooted)   score += 1;
+
+    /* W^X violations (WXNEEDED) reduce score */
+    if (p->wxneeded)   score -= 2;
+
+    return score;
 }
 
 void audit_process_memory(int pid) {

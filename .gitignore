@@ -1,27 +1,116 @@
+# ==============================================================================
+# OpenSec - Git Ignore Configuration
+# OpenBSD Security Auditor
+# ==============================================================================
+
 # Binários e objetos
+# ------------------------------------------------------------------------------
 bin/
 obj/
+build/
 *.o
 *.a
 *.so
 
+# Binário principal
+# ------------------------------------------------------------------------------
+opensec
+
+# Output files (auto-generated)
+# ------------------------------------------------------------------------------
+output.json
+output.csv
+baseline.json
+ktrace.out
+
 # Temporários
+# ------------------------------------------------------------------------------
 *~
 *.swp
 *.bak
 *.tmp
 
+# Environment Files (CRITICAL - nunca commitar secrets)
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.staging
+.env.test
+
+# Secrets & Credentials
+# ------------------------------------------------------------------------------
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+*.keystore
+*.ovpn
+secrets.yml
+secrets.yaml
+credentials.json
+service-account.json
+firebase.json
+.npmrc
+.pypirc
+.netrc
+
+# SSH Keys
+# ------------------------------------------------------------------------------
+id_rsa
+id_ed25519
+authorized_keys
+known_hosts
+.ssh/
+.gnupg/
+
 # IDE
+# ------------------------------------------------------------------------------
 .vscode/
 .idea/
-output.json
-output.csv
-bin/
-build/
-baseline.json
-bin/
-*.json
-*.csv
-opensec
-ktrace.out
+
+# OS
+# ------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# History
+# ------------------------------------------------------------------------------
+.history
+.bash_history
+.zsh_history
+
+# Reports
+# ------------------------------------------------------------------------------
+reports/
+report.csv
+report.json
+
+# Database
+# ------------------------------------------------------------------------------
+*.sql
+*.db
+*.sqlite
+*.mdb
+backup.sql
+dump.sql
+database.sql
+
+# Cloud & Infrastructure
+# ------------------------------------------------------------------------------
+.terraform/
+terraform.tfstate
+terraform.tfvars
+.kube/
+.aws/
+.docker/config.json
+
+# Core dumps
+# ------------------------------------------------------------------------------
 *.core

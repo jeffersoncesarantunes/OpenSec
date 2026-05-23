@@ -18,21 +18,29 @@
 
 typedef struct {
     pid_t pid;
+    pid_t ppid;
     char name[64];
+    char ppname[64];
     int has_pledge;
     int has_unveil;
     int wxneeded;
     int chrooted;
+    int score;
 } ProcessInfo;
 
 typedef struct {
+    int total;
     int pledged_processes;
     int unveiled_processes;
     int wxneeded_processes;
     int chrooted_processes;
+    double avg_score;
+    int max_score;
+    int min_score;
 } SystemStats;
 
 ProcessInfo* get_all_processes(int *count);
+int compute_security_score(const ProcessInfo *p);
 void audit_process_memory(int pid);
 void audit_self(void);
 

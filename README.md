@@ -71,14 +71,14 @@ All inspection is passive and does not interfere with execution.
 ## ● Example Output
 
 ```text
-PID      PROCESS          PLEDGE          UNVEIL          CONTEXT
---------------------------------------------------------------------
-89905    opensec          NONE            NONE            NATIVE
-80996    ksh              ACTIVE          NONE            NATIVE
-96837    xfce4-terminal   NONE            NONE            NATIVE
-20033    firefox          ACTIVE          NONE            NATIVE
-18100    firefox          NONE            NONE            NATIVE
-79750    accounts-daemon  NONE            NONE            NATIVE
+PID      PPID   PROCESS                PARENT                 PLEDGE  UNVEIL  W^X     SCORE
+-----------------------------------------------------------------------------------------------------
+89905    1      opensec                init                    NONE    NONE    ok      0
+80996    57770  ksh                    xfce4-terminal          ACTIVE  NONE    ok      3
+96837    1      xfce4-terminal         init                    NONE    NONE    ok      0
+20033    38074  firefox                firefox                 ACTIVE  NONE    ok      3
+18100    20033  firefox                firefox                 NONE    NONE    ok      0
+79750    1      accounts-daemon        init                    NONE    NONE    ok      0
 ```
 
 *Output reflects kernel-reported mitigation state.*
@@ -104,6 +104,9 @@ PID      PROCESS          PLEDGE          UNVEIL          CONTEXT
 * `pledge(2)` enforcement detection
 * `unveil(2)` state visibility
 * W^X-related indicators
+* PID filtering (`--pid`) — inspect a single process and its children
+* Parent process mapping (PPID) — show parent PID and process name
+* Per-process security scoring — quantifiable hardening score per process
 * Deterministic classification
 * Minimal runtime footprint
 
@@ -141,12 +144,21 @@ cd OpenSec
 # Build
 make clean && make
 
-# Run
+# Run (full system audit)
 doas ./opensec
+
+# Filter by PID (show PID 20033 and its children)
+doas ./opensec --pid 20033
 
 # Structured output
 doas ./opensec --format json --quiet
 doas ./opensec --format csv --quiet
+
+# Combined: filter + quiet + json
+doas ./opensec --pid 20033 --format json --quiet
+
+# Per-process memory audit
+doas ./opensec --scan-wx 20033
 ```
 
 ---
@@ -234,9 +246,9 @@ doas fstat -p [PID]
 * [x] Kernel state extraction via `libkvm(3)`
 * [x] JSON/CSV export
 * [x] Silent mode (`--quiet`)
-* [ ] PID filtering (`--pid`)
-* [ ] Parent process mapping (PPID)
-* [ ] Per-process security scoring
+* [x] PID filtering (`--pid`)
+* [x] Parent process mapping (PPID)
+* [x] Per-process security scoring
 
 ---
 
