@@ -13,9 +13,7 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 
 ## ● Etymology & Origin
 
-The name OpenSec comes from the fusion of *Open* and *Security*, directly inspired by the OpenBSD philosophy.
-
-“Open” here is not just about source code — it reflects transparency, auditability, and predictable system behavior.
+The name **OpenSec** comes from the fusion of **Open** and **Security**, directly inspired by the **OpenBSD** philosophy. The "Open" prefix reflects the same principles that guide OpenBSD — transparency, auditability, and clean design. "Sec" stands for Security, the core domain of the tool.
 
 OpenSec follows the idea that security tools should be minimal, inspectable, and free from hidden logic.
 
@@ -85,6 +83,25 @@ PID      PPID   PROCESS                PARENT                 PLEDGE  UNVEIL  W^
 
 ---
 
+## ● Security Scoring
+
+Each process receives a score from **-2 to 6** based on kernel-reported mitigation state:
+
+| Criteria | Value | Description |
+| :------- | :---: | :---------- |
+| `pledge(2)` active | **+3** | Strongest mitigation — restricts syscall access |
+| `unveil(2)` active | **+2** | Restricts filesystem visibility |
+| `chroot` jail | **+1** | Additional filesystem containment |
+| W^X violation (WXNEEDED) | **-2** | Penalty — writable+executable memory pages |
+
+| Score Range | Color | Meaning |
+| :---------: | :---: | :------ |
+| 4 – 6 | Green | Well-hardened |
+| 1 – 3 | Yellow | Partial mitigation |
+| ≤ 0 | Red | Unrestricted / vulnerable |
+
+---
+
 ## ● Project in Action
 
 ![Initial Scan](./Imagens/opensec1.png)
@@ -106,7 +123,9 @@ PID      PPID   PROCESS                PARENT                 PLEDGE  UNVEIL  W^
 * W^X-related indicators
 * PID filtering (`--pid`) — inspect a single process and its children
 * Parent process mapping (PPID) — show parent PID and process name
-* Per-process security scoring — quantifiable hardening score per process
+* Per-process security scoring — quantifiable hardening score per process (see scoring criteria below)
+* Self-hardening — OpenSec applies `pledge(2)` and `unveil(2)` to itself at runtime
+* Self-audit — automatic W^X memory verification of its own process on startup
 * Deterministic classification
 * Minimal runtime footprint
 
@@ -157,7 +176,10 @@ doas ./opensec --format csv --quiet
 # Combined: filter + quiet + json
 doas ./opensec --pid 20033 --format json --quiet
 
-# Per-process memory audit
+# Quiet mode with short flag
+doas ./opensec -q
+
+# Per-process W^X memory audit (standalone mode — exits after scan)
 doas ./opensec --scan-wx 20033
 ```
 
@@ -166,7 +188,6 @@ doas ./opensec --scan-wx 20033
 ## ● Repository Structure
 
 ```text
-├── bin/
 ├── docs/
 │   ├── BENCHMARKS.md
 │   └── SECURITY_MODEL.md
@@ -175,6 +196,7 @@ doas ./opensec --scan-wx 20033
 │   ├── opensec2.png
 │   └── opensec3.png
 ├── include/
+│   └── opensec.h
 ├── src/
 │   ├── engine.c
 │   └── main.c
@@ -201,6 +223,13 @@ Generated files:
 
 * output.json
 * output.csv
+
+Each entry in the structured output includes a `context` field indicating the process origin:
+
+| Value    | Meaning                          |
+| :------- | :------------------------------- |
+| `KERNEL` | System / kernel process (PID < 100) |
+| `NATIVE` | Regular userland process          |
 
 ---
 
@@ -245,7 +274,7 @@ doas fstat -p [PID]
 * [x] `pledge(2)` / `unveil(2)` visibility
 * [x] Kernel state extraction via `libkvm(3)`
 * [x] JSON/CSV export
-* [x] Silent mode (`--quiet`)
+* [x] Silent mode (`--quiet` / `-q`)
 * [x] PID filtering (`--pid`)
 * [x] Parent process mapping (PPID)
 * [x] Per-process security scoring
