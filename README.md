@@ -96,6 +96,32 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 
 ---
 
+## ● System Behavior & Constraints
+
+When executing PMV on a clean, default OpenBSD installation, specific security warnings or notices may appear. These are expected behaviors driven by OpenBSD's defensive design philosophy:
+
+### 1. Virtual Memory Mapping Restriction
+
+```text
+[!] VMMAP sysctl failed for PID XXXXX: KERN_PROC_VMMAP is restricted...
+```
+
+* **Technical Context:** OpenBSD inherently restricts userland applications from inspecting raw process memory maps (`KERN_PROC_VMMAP`) to prevent local information leaks that could be used to bypass ASLR (Address Space Layout Randomization).
+* **Workaround for Auditing:** If you are running PMV in a security lab environment and explicitly want to test deep memory auditing features (`--scan-wx`), you must temporarily instruct the kernel to permit memory mapping inspection:
+
+```bash
+doas sysctl kern.allowkmem=1
+```
+
+### 2. Mitigation Policy Depth Note
+
+```text
+[!] PLEDGE/UNVEIL shows PRESENCE only — kernel does not expose policy depth.
+```
+
+* **Technical Context:** The OpenBSD kernel optimizes performance and boundary isolation by using internal bitmask flags inside the process structure (`p_psflags`) to track whether a mitigation is active. The kernel does not maintain or expose a verbose string array back to userland outlining which paths were unveiled or which specific string promises were requested.
+* **Operational Meaning:** A status of `PRESENT` confirms that the binary actively drops privileges and implements standard platform hardenings, but the tool cannot audit policy granularities due to kernel-level abstraction.
+
 ## ● Build and Run
 
 ```bash
