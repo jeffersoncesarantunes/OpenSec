@@ -1,6 +1,6 @@
-# 🐡 OpenSec
+# 🐡 PMV
 
-Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, and W^X visibility.
+Lightweight OpenBSD process mitigation visibility tool focused on pledge, unveil, and W^X status.
 
 [![Platform-OpenBSD](https://img.shields.io/badge/Platform-OpenBSD-FBD12B?style=flat-square&logo=openbsd&logoColor=black)](https://www.openbsd.org)
 [![Language-C11](https://img.shields.io/badge/Language-C11-1793D1?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
@@ -13,56 +13,37 @@ Lightweight OpenBSD process mitigation auditing tool focused on pledge, unveil, 
 
 ## ● Etymology & Origin
 
-The name **OpenSec** comes from the fusion of **Open** and **Security**, directly inspired by the **OpenBSD** philosophy. The "Open" prefix reflects the same principles that guide OpenBSD — transparency, auditability, and clean design. "Sec" stands for Security, the core domain of the tool.
+**PMV** stands for **P**rocess **M**itigation **V**iewer. The name was chosen deliberately — this is a **viewer**, not an auditor, not a security scanner, not a vulnerability finder. It shows the presence or absence of kernel mitigations per process, and is explicit about the limits of what the kernel exposes.
 
-OpenSec follows the idea that security tools should be minimal, inspectable, and free from hidden logic.
+The project originally used the name OpenSec, but was renamed to PMV to more accurately describe its scope and avoid implying capabilities beyond its design.
 
 ---
 
 ## ● Overview
 
-OpenSec is a minimal forensic utility designed to audit process-level mitigation mechanisms on OpenBSD.
+PMV is a minimal utility designed to inspect and display process-level mitigation state on OpenBSD.
 
-It inspects kernel-exposed process metadata using:
+It inspects kernel-exposed process metadata using `kvm(3)` and `struct kinfo_proc` to evaluate whether active processes enforce `pledge(2)`, `unveil(2)`, and W^X policy.
 
-* `kvm(3)`
-* `struct kinfo_proc`
+All classification is based strictly on kernel-reported state — PMV does not perform runtime analysis, syscall tracing, or behavioral detection.
 
-The tool evaluates whether active processes enforce core security primitives such as:
-
-* `pledge(2)`
-* `unveil(2)`
-
-It also inspects kernel metadata related to W^X enforcement behavior.
-
-All classification is based strictly on kernel-reported state.
+**On scope and honesty:** PMV does not attempt to replace `ktrace(1)`, `btrace(8)`, or any existing OpenBSD introspection tool. It simply reads what the kernel already exposes and displays it in a readable format. The kernel exposes whether `pledge(2)` and `unveil(2)` were called — not which promises were made or which paths were unveiled. PMV does not pretend otherwise. This is a design constraint of the platform, not a missing feature.
 
 ---
 
-## ● Why
+## ● Features
 
-OpenBSD provides strong built-in mitigations, but visibility into which processes actively enforce them is not centralized.
-
-OpenSec provides:
-
-* Clear mitigation visibility per process
-* System-wide auditing
-* Hardening validation support
-* Live forensic triage assistance
-
----
-
-## ● How It Works
-
-OpenSec interfaces with **libkvm** to access the kernel process table in read-only mode.
-
-For each process, it evaluates fields within **struct kinfo_proc** to determine:
-
-* pledge restriction state
-* unveil restriction state
-* indicators of W^X enforcement
-
-All inspection is passive and does not interfere with execution.
+* Kernel process table inspection via `libkvm`
+* `pledge(2)` state detection (called / not called)
+* `unveil(2)` state detection (called / not called)
+* W^X-related indicators
+* PID filtering (`--pid`) — inspect a single process and its children
+* Parent process mapping (PPID) — show parent PID and process name
+* Per-process scoring based on kernel-reported mitigation state
+* Self-hardening — PMV applies `pledge(2)` and `unveil(2)` to itself at runtime
+* Self-audit — automatic W^X memory verification of its own process on startup
+* Structured export (JSON, CSV)
+* Diff mode (`--diff`) — compare current state against previous snapshot
 
 ---
 
@@ -71,15 +52,28 @@ All inspection is passive and does not interfere with execution.
 ```text
 PID      PPID   PROCESS                PARENT                 PLEDGE  UNVEIL  W^X     SCORE
 -----------------------------------------------------------------------------------------------------
-89905    1      opensec                init                    NONE    NONE    ok      0
-80996    57770  ksh                    xfce4-terminal          ACTIVE  NONE    ok      3
+89905    1      pmv                    init                    NONE    NONE    ok      0
+80996    57770  ksh                    xfce4-terminal          PRESENT NONE    ok      3
 96837    1      xfce4-terminal         init                    NONE    NONE    ok      0
-20033    38074  firefox                firefox                 ACTIVE  NONE    ok      3
+20033    38074  firefox                firefox                 PRESENT NONE    ok      3
 18100    20033  firefox                firefox                 NONE    NONE    ok      0
 79750    1      accounts-daemon        init                    NONE    NONE    ok      0
 ```
 
-*Output reflects kernel-reported mitigation state.*
+*Output reflects kernel-reported mitigation state. `PRESENT` confirms the syscall was called — it does not indicate policy depth or scope.*
+
+---
+
+## ● How It Works
+
+PMV interfaces with **libkvm** to access the kernel process table in read-only mode. For each process, it reads `struct kinfo_proc` to determine:
+
+* Whether `pledge(2)` was called (`p_psflags & PS_PLEDGE`)
+* Whether `unveil(2)` was called (`p_psflags & PS_UNVEIL`)
+* Whether W^X enforcement is active (`p_psflags & PS_WXNEEDED`)
+* Whether the process is chrooted (`p_flag & P_CHROOT`)
+
+**Known limitation:** The kernel exposes only a boolean for pledge and unveil — presence or absence. It does not expose the specific promises passed to `pledge(2)` or the paths passed to `unveil(2)`. PMV cannot report what the kernel does not provide.
 
 ---
 
@@ -89,16 +83,53 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 
 | Criteria | Value | Description |
 | :------- | :---: | :---------- |
-| `pledge(2)` active | **+3** | Strongest mitigation — restricts syscall access |
-| `unveil(2)` active | **+2** | Restricts filesystem visibility |
+| `pledge(2)` called | **+3** | Syscall restriction active (depth unknown) |
+| `unveil(2)` called | **+2** | Filesystem restriction active (scope unknown) |
 | `chroot` jail | **+1** | Additional filesystem containment |
 | W^X violation (WXNEEDED) | **-2** | Penalty — writable+executable memory pages |
 
 | Score Range | Color | Meaning |
 | :---------: | :---: | :------ |
-| 4 – 6 | Green | Well-hardened |
+| 4 – 6 | Green | Multiple mitigations detected |
 | 1 – 3 | Yellow | Partial mitigation |
-| ≤ 0 | Red | Unrestricted / vulnerable |
+| ≤ 0 | Red | No mitigations detected |
+
+---
+
+## ● Build and Run
+
+```bash
+# Clone the repository
+git clone https://github.com/jeffersoncesarantunes/OpenSec.git
+cd OpenSec
+
+# Build
+make clean && make
+
+# Run (full system scan)
+doas ./pmv
+
+# Filter by PID (show PID 20033 and its children)
+doas ./pmv --pid 20033
+
+# Structured output
+doas ./pmv --format json --quiet
+doas ./pmv --format csv --quiet
+
+# Diff mode — compare against previous snapshot
+doas ./pmv --diff
+
+# Per-process W^X memory scan (standalone mode)
+doas ./pmv --scan-wx 20033
+```
+
+### Generated Artifacts
+
+| File | Description |
+| :--- | :---------- |
+| `output.json` | Structured export (machine-readable) |
+| `output.csv` | Tabular export (spreadsheet-friendly) |
+| `.pmv_snapshot` | Internal diff snapshot (auto-generated) |
 
 ---
 
@@ -115,29 +146,13 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 
 ---
 
-## ● Features
-
-* Kernel process table inspection via `libkvm`
-* `pledge(2)` enforcement detection
-* `unveil(2)` state visibility
-* W^X-related indicators
-* PID filtering (`--pid`) — inspect a single process and its children
-* Parent process mapping (PPID) — show parent PID and process name
-* Per-process security scoring — quantifiable hardening score per process (see scoring criteria below)
-* Self-hardening — OpenSec applies `pledge(2)` and `unveil(2)` to itself at runtime
-* Self-audit — automatic W^X memory verification of its own process on startup
-* Deterministic classification
-* Minimal runtime footprint
-
----
-
 ## ● Operational Integrity
 
-OpenSec is designed for safe forensic usage:
+PMV is designed for safe forensic usage:
 
-* Read-only kernel access
-* No process interaction
-* No execution interference
+* Read-only kernel access via `libkvm`
+* No process interaction or `ptrace(2)` usage
+* Self-hardened with `pledge(2)` and `unveil(2)` at runtime
 * Graceful handling of restricted entries
 
 ---
@@ -150,38 +165,6 @@ OpenSec is designed for safe forensic usage:
 * libkvm
 * BSD make
 * doas or root privileges
-
----
-
-## ● Build and Run
-
-```bash
-# Clone the repository
-git clone https://github.com/jeffersoncesarantunes/OpenSec.git
-cd OpenSec
-
-# Build
-make clean && make
-
-# Run (full system audit)
-doas ./opensec
-
-# Filter by PID (show PID 20033 and its children)
-doas ./opensec --pid 20033
-
-# Structured output
-doas ./opensec --format json --quiet
-doas ./opensec --format csv --quiet
-
-# Combined: filter + quiet + json
-doas ./opensec --pid 20033 --format json --quiet
-
-# Quiet mode with short flag
-doas ./opensec -q
-
-# Per-process W^X memory audit (standalone mode — exits after scan)
-doas ./opensec --scan-wx 20033
-```
 
 ---
 
@@ -208,56 +191,6 @@ doas ./opensec --scan-wx 20033
 
 ---
 
-## ● Forensic Export & Post-Analysis
-
-OpenSec supports structured output for integration with forensic workflows.
-
-### Generate Reports
-
-```bash
-doas ./opensec --format json --quiet
-doas ./opensec --format csv --quiet
-```
-
-Generated files:
-
-* output.json
-* output.csv
-
-Each entry in the structured output includes a `context` field indicating the process origin:
-
-| Value    | Meaning                          |
-| :------- | :------------------------------- |
-| `KERNEL` | System / kernel process (PID < 100) |
-| `NATIVE` | Regular userland process          |
-
----
-
-### Integrity & Visualization
-
-```bash
-sha256 output.json
-
-sed 's/"//g' output.csv | column -t -s ','
-```
-
----
-
-### Deep Analysis
-
-```bash
-# Binary integrity
-sha256 /usr/local/bin/firefox
-
-# Syscall tracing
-doas ktrace -p [PID] && doas kdump -f ktrace.out | head -n 40
-
-# File descriptors
-doas fstat -p [PID]
-```
-
----
-
 ## ● Tech Stack
 
 * **Language:** C (C11)
@@ -265,19 +198,21 @@ doas fstat -p [PID]
 * **Data Source:** struct kinfo_proc
 * **Build Tool:** BSD make
 * **Platform:** OpenBSD
+* **Previously:** OpenSec
 
 ---
 
 ## ● Roadmap
 
-* [x] Core mitigation auditing engine
+* [x] Core mitigation state engine
 * [x] `pledge(2)` / `unveil(2)` visibility
 * [x] Kernel state extraction via `libkvm(3)`
 * [x] JSON/CSV export
 * [x] Silent mode (`--quiet` / `-q`)
 * [x] PID filtering (`--pid`)
 * [x] Parent process mapping (PPID)
-* [x] Per-process security scoring
+* [x] Per-process scoring
+* [x] Diff mode (`--diff`) — change detection across runs
 
 ---
 
