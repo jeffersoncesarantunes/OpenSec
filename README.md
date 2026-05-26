@@ -42,6 +42,8 @@ All classification is based strictly on kernel-reported state — PMV does not p
 * Self-audit — automatic W^X memory verification of its own process on startup
 * Structured export (JSON, CSV)
 * Diff mode (`--diff`) — compare current state against previous snapshot
+* W^X memory scan (`--scan-wx`) — per-region protection analysis with violation summary
+* Built-in help (`--help` / `-h`) — usage reference for all flags
 
 ---
 
@@ -107,6 +109,9 @@ make clean && make
 # Run (full system scan)
 doas ./pmv
 
+# Show usage reference
+doas ./pmv --help
+
 # Filter by PID (show PID 20033 and its children)
 doas ./pmv --pid 20033
 
@@ -117,7 +122,7 @@ doas ./pmv --format csv --quiet
 # Diff mode — compare against previous snapshot
 doas ./pmv --diff
 
-# Per-process W^X memory scan (standalone mode)
+# W^X memory scan with per-region detail and violation summary
 doas ./pmv --scan-wx 20033
 ```
 
