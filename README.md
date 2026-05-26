@@ -15,8 +15,6 @@ Lightweight OpenBSD process mitigation visibility tool focused on pledge, unveil
 
 **PMV** stands for **P**rocess **M**itigation **V**iewer. The name was chosen deliberately — this is a **viewer**, not an auditor, not a security scanner, not a vulnerability finder. It shows the presence or absence of kernel mitigations per process, and is explicit about the limits of what the kernel exposes.
 
-The project originally used the name OpenSec, but was renamed to PMV to more accurately describe its scope and avoid implying capabilities beyond its design.
-
 ---
 
 ## ● Overview
@@ -52,12 +50,12 @@ All classification is based strictly on kernel-reported state — PMV does not p
 ```text
 PID      PPID   PROCESS                PARENT                 PLEDGE  UNVEIL  W^X     SCORE
 -----------------------------------------------------------------------------------------------------
-89905    1      pmv                    init                    NONE    NONE    ok      0
-80996    57770  ksh                    xfce4-terminal          PRESENT NONE    ok      3
-96837    1      xfce4-terminal         init                    NONE    NONE    ok      0
-20033    38074  firefox                firefox                 PRESENT NONE    ok      3
-18100    20033  firefox                firefox                 NONE    NONE    ok      0
-79750    1      accounts-daemon        init                    NONE    NONE    ok      0
+89905    57770  pmv                    ksh                    PRESENT PRESENT ok      5
+80996    57770  ksh                    xfce4-terminal         PRESENT NONE    ok      3
+96837    1      xfce4-terminal         init                   NONE    NONE    ok      0
+20033    38074  firefox                firefox                PRESENT NONE    ok      3
+18100    20033  firefox                firefox                NONE    NONE    ok      0
+79750    1      accounts-daemon        init                   NONE    NONE    ok      0
 ```
 
 *Output reflects kernel-reported mitigation state. `PRESENT` confirms the syscall was called — it does not indicate policy depth or scope.*
@@ -100,8 +98,8 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 
 ```bash
 # Clone the repository
-git clone https://github.com/jeffersoncesarantunes/OpenSec.git
-cd OpenSec
+git clone https://github.com/jeffersoncesarantunes/PMV.git
+cd PMV
 
 # Build
 make clean && make
@@ -135,13 +133,13 @@ doas ./pmv --scan-wx 20033
 
 ## ● Project in Action
 
-![Initial Scan](./Imagens/opensec1.png)
+![Initial Scan](./Imagens/pmv1.png)
 *1 - Build and initial kernel scan.*
 
-![Mitigation Analysis](./Imagens/opensec2.png)
+![Mitigation Analysis](./Imagens/pmv2.png)
 *2 - Structured output generation using --quiet and --format.*
 
-![Forensic Summary](./Imagens/opensec3.png)
+![Integrity Check](./Imagens/pmv3.png)
 *3 - Validation of process-level mitigation data and integrity checks.*
 
 ---
@@ -175,11 +173,11 @@ PMV is designed for safe forensic usage:
 │   ├── BENCHMARKS.md
 │   └── SECURITY_MODEL.md
 ├── Imagens/
-│   ├── opensec1.png
-│   ├── opensec2.png
-│   └── opensec3.png
+│   ├── pmv1.png
+│   ├── pmv2.png
+│   └── pmv3.png
 ├── include/
-│   └── opensec.h
+│   └── pmv.h
 ├── src/
 │   ├── engine.c
 │   └── main.c
@@ -198,7 +196,6 @@ PMV is designed for safe forensic usage:
 * **Data Source:** struct kinfo_proc
 * **Build Tool:** BSD make
 * **Platform:** OpenBSD
-* **Previously:** OpenSec
 
 ---
 
