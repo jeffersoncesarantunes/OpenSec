@@ -1,12 +1,12 @@
 #  ● Technical Specification: Security Model & Forensic Workflow
 
-This document details the architectural logic of OpenSec and provides a formal guide on how to interpret and act upon the results using native OpenBSD forensic tools.
+This document details the architectural logic of PMV and provides a formal guide on how to interpret and act upon the results using native OpenBSD forensic tools.
 
 ---
 
 ## 1. Philosophical Foundation
 
-OpenSec is built on the **"Verify, then Trust"** principle. OpenSec identifies the "gap" between kernel capability and application adoption.
+PMV is built on the **"Verify, then Trust"** principle. PMV identifies the "gap" between kernel capability and application adoption.
 
 ### 1.1 The "Naked Binary" Problem
 A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Binary," providing unrestricted access to system calls and global filesystem scope.
@@ -20,11 +20,13 @@ A process running without `pledge(2)` or `unveil(2)` is considered a "Naked Bina
 * **Data Integrity:** Bypasses text-based process lists to avoid TOCTOU vulnerabilities.
 
 ### 2.2 UI Chromatic Logic (ANSI Escape Codes)
-OpenSec uses standard ANSI sequences to categorize process states. **Note on Environment Variability:**
-During development and validation, tests were conducted on **Kitty** and **xfce4-terminal**. It was observed that:
-* **Userland (NATIVE):** May appear as **Purple** (Kitty/Modern) or **Blue** (Xfce4/Classic).
-* **System (KERNEL):** May appear as **Pink** (Kitty) or **Magenta** (Xfce4).
-* **Mitigations:** Green (Active) and Red (None) remain consistent across most themes.
+PMV uses standard ANSI escape sequences to categorize process states:
+* **NATIVE (PID ≥ 100):** Blue foreground.
+* **KERNEL (PID < 100):** Magenta foreground.
+* **Mitigations:** Green (Active) and Red (None).
+* **Security Score:** Green (≥ 4), Yellow (1–3), Red (≤ 0).
+
+Actual rendering may vary slightly between terminal emulators; the semantic mapping above is what the code emits.
 
 ---
 
@@ -44,9 +46,9 @@ During development and validation, tests were conducted on **Kitty** and **xfce4
 
 ## 4. Operational Safety & Resolution
 
-### 4.1 Handling "ACTION REQUIRED"
-When prompted during an audit, selecting **Option 3 (Ignore)** is the recommended action. This prevents the auditor from waiting on a non-responsive PID, avoiding potential system instability.
+### 4.1 Handling Errors
+PMV returns actionable messages for each error case: `EINVAL` from `sysctl(KERN_PROC_VMMAP)` is reported and skipped; memory allocation failures abort cleanly. No interactive prompts are required — the tool either succeeds or reports the specific failure.
 
 ### 4.2 Hardening Hierarchy
 1. **Code Patching:** Implement `pledge()` and `unveil()` based on gathered data.
-2. **Verification:** Rerun OpenSec to confirm **ACTIVE** status.
+2. **Verification:** Rerun PMV to confirm **PRESENT** status.

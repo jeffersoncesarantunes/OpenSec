@@ -1,5 +1,5 @@
-#ifndef OPENSEC_H
-#define OPENSEC_H
+#ifndef PMV_H
+#define PMV_H
 
 #include <sys/types.h>
 #include <sys/param.h>
