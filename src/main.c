@@ -41,8 +41,11 @@ void print_header(void) {
 }
 
 void export_json_manual(ProcessInfo *processes, int count, const char *filename) {
-    FILE *f = fopen(filename, "w");
-    if (!f) return;
+    FILE *f = stdout;
+    if (filename != NULL) {
+        f = fopen(filename, "w");
+        if (!f) return;
+    }
     fputs("[\n", f);
     for (int i = 0; i < count; i++) {
         fprintf(f, "  {\n");
@@ -59,12 +62,15 @@ void export_json_manual(ProcessInfo *processes, int count, const char *filename)
         fprintf(f, "  }%s\n", (i + 1 < count) ? "," : "");
     }
     fputs("]\n", f);
-    fclose(f);
+    if (filename != NULL) fclose(f);
 }
 
 void export_csv(ProcessInfo *processes, int count, const char *filename) {
-    FILE *f = fopen(filename, "w");
-    if (!f) return;
+    FILE *f = stdout;
+    if (filename != NULL) {
+        f = fopen(filename, "w");
+        if (!f) return;
+    }
     fprintf(f, "pid,ppid,name,ppname,pledge,unveil,wxneeded,chrooted,context,score\n");
     for (int i = 0; i < count; i++) {
         fprintf(f, "%d,%d,%s,%s,%d,%d,%d,%d,%s,%d\n",
@@ -75,7 +81,7 @@ void export_csv(ProcessInfo *processes, int count, const char *filename) {
             processes[i].score
         );
     }
-    fclose(f);
+    if (filename != NULL) fclose(f);
 }
 
 static const char *
@@ -177,7 +183,7 @@ print_diff(const ProcessInfo *oldp, int oldc,
                 newp[i].pid,
                 newp[i].has_pledge ? "PRESENT" : "NONE",
                 newp[i].has_unveil ? "PRESENT" : "NONE",
-                newp[i].wxneeded   ? "W^X"    : "ok",
+                newp[i].wxneeded   ? "W^X"     : "ok",
                 newp[i].name);
         }
     }
@@ -193,7 +199,7 @@ print_diff(const ProcessInfo *oldp, int oldc,
                 oldp[i].pid,
                 oldp[i].has_pledge ? "PRESENT" : "NONE",
                 oldp[i].has_unveil ? "PRESENT" : "NONE",
-                oldp[i].wxneeded   ? "W^X"    : "ok",
+                oldp[i].wxneeded   ? "W^X"     : "ok",
                 oldp[i].name);
         }
     }
@@ -208,19 +214,19 @@ usage(void) {
         "Usage: pmv [options]\n"
         "\n"
         "Options:\n"
-        "  -h, --help           Show this help message and exit\n"
-        "  -q, --quiet          Suppress banner and per-process output\n"
-        "  --pid <PID>          Show only PID and its children\n"
-        "  --format <json|csv>  Export structured output to file\n"
-        "  --diff               Compare against previous snapshot\n"
-        "  --scan-wx <PID>      Scan process memory for W+X pages\n"
+        "  -h, --help            Show this help message and exit\n"
+        "  -q, --quiet           Suppress banner and per-process output\n"
+        "  --pid <PID>           Show only PID and its children\n"
+        "  --format <json|csv>   Export structured output to terminal or file\n"
+        "  --diff                Compare against previous snapshot\n"
+        "  --scan-wx <PID>       Scan process memory for W+X pages\n"
         "\n"
         "Examples:\n"
-        "  doas ./pmv                        Full system scan\n"
-        "  doas ./pmv --pid 20033            Filter by PID\n"
-        "  doas ./pmv --format json --quiet  Quiet JSON export\n"
-        "  doas ./pmv --diff                 Snapshot comparison\n"
-        "  doas ./pmv --scan-wx 20033        W^X memory scan\n"
+        "  doas ./pmv                Full system scan\n"
+        "  doas ./pmv --pid 20033     Filter by PID\n"
+        "  doas ./pmv --format json   Print JSON output directly to screen\n"
+        "  doas ./pmv --diff                  Snapshot comparison\n"
+        "  doas ./pmv --scan-wx 20033          W^X memory scan\n"
     );
 }
 
@@ -266,11 +272,12 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    print_header();
-    
-    if (!quiet_mode) {
-        printf(BOLD CYN "--- Runtime State Scan ---" RESET "\n");
-        audit_self();
+    if (out_format == NONE) {
+        print_header();
+        if (!quiet_mode) {
+            printf(BOLD CYN "--- Runtime State Scan ---" RESET "\n");
+            audit_self();
+        }
     }
 
     int count = 0;
@@ -302,16 +309,16 @@ int main(int argc, char *argv[]) {
     if (diff_mode)
         oldp = load_snapshot(&oldp_count);
 
-    if (pledge("stdio rpath wpath cpath ps vminfo", NULL) == -1) err(1, "pledge");
+    if (unveil("/dev", "r") == -1) err(1, "unveil /dev");
+    if (unveil("output.json", "rwc") == -1) err(1, "unveil output.json");
+    if (unveil("output.csv", "rwc") == -1) err(1, "unveil output.csv");
+    if (unveil(SNAPSHOT_FILE, "rwc") == -1) err(1, "unveil snapshot");
+    if (unveil("/usr/lib", "r") == -1) err(1, "unveil /usr/lib");
+    if (unveil(NULL, NULL) == -1) err(1, "unveil seal");
 
-    unveil("/dev", "r");
-    unveil("output.json", "rwc");
-    unveil("output.csv", "rwc");
-    unveil(SNAPSHOT_FILE, "rwc");
-    unveil("/usr/lib", "r");
-    unveil(NULL, NULL);
+    if (pledge("stdio rpath wpath cpath ps vminfo unveil", NULL) == -1) err(1, "pledge");
 
-    if (!quiet_mode) {
+    if (out_format == NONE && !quiet_mode) {
         if (target_pid > 0)
             printf("\n" BOLD "[+] Filtered view for PID %d (including children)\n" RESET, target_pid);
         printf("\n" BOLD "%-8s %-6s %-22s %-22s %-7s %-7s %-7s %-6s\n" RESET,
@@ -332,7 +339,7 @@ int main(int argc, char *argv[]) {
         if (p->score > score_max) score_max = p->score;
         if (p->score < score_min) score_min = p->score;
 
-        if (!quiet_mode) {
+        if (out_format == NONE && !quiet_mode) {
             char *ctx_color = (p->pid < 100) ? MAG : BLU;
             printf("%s%-8d" RESET " %-6d %-22.22s %-22.22s ",
                    ctx_color, p->pid, p->ppid, p->name, p->ppname);
@@ -348,12 +355,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (diff_mode && oldp) {
+    if (out_format == NONE && diff_mode && oldp) {
         print_diff(oldp, oldp_count, display_list, display_count);
         free(oldp);
     }
 
-    if (!quiet_mode) {
+    if (out_format == NONE && !quiet_mode) {
         print_separator();
         printf("\n" BOLD "[+] MITIGATION SUMMARY\n" RESET);
         printf("    [#] Total Processes:      %d\n", display_count);
@@ -374,10 +381,16 @@ int main(int argc, char *argv[]) {
         printf( YEL "    See https://github.com/jeffersoncesarantunes/PMV#limitations\n" RESET);
     }
 
-    if (out_format == JSON) export_json_manual(display_list, display_count, "output.json");
-    if (out_format == CSV) export_csv(display_list, display_count, "output.csv");
+    if (out_format == JSON) {
+        if (quiet_mode) export_json_manual(display_list, display_count, "output.json");
+        else export_json_manual(display_list, display_count, NULL);
+    }
+    if (out_format == CSV) {
+        if (quiet_mode) export_csv(display_list, display_count, "output.csv");
+        else export_csv(display_list, display_count, NULL);
+    }
 
-    if (save_snapshot(display_list, display_count) == -1 && !quiet_mode)
+    if (save_snapshot(display_list, display_count) == -1 && !quiet_mode && out_format == NONE)
         warn("save_snapshot");
 
     if (target_pid > 0 && display_list) free(display_list);

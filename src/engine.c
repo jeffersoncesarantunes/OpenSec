@@ -9,6 +9,7 @@
 #include <kvm.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <err.h>
 #include "pmv.h"
 
 #ifndef PS_WXNEEDED
@@ -98,14 +99,9 @@ void audit_process_memory(int pid) {
 
     if (sysctl(mib, 4, NULL, &size, NULL, 0) == -1) {
         if (errno == EINVAL) {
-            printf("\n" "\x1b[33m" "[!] VMMAP sysctl failed for PID %d: "
-                   "KERN_PROC_VMMAP is restricted or not available on this kernel." "\x1b[0m" "\n", pid);
-            printf("    Try setting kern.allowkmem=1 in /etc/sysctl.conf "
-                   "or use procmap(1) as an alternative.\n");
+            printf("\n\x1b[33m[!] VMMAP sysctl failed for PID %d: KERN_PROC_VMMAP is restricted or not available on this kernel.\x1b[0m\n", pid);
         } else if (errno == EACCES || errno == EPERM) {
-            fprintf(stderr, "[-] Permission denied for PID %d: %s\n"
-                    "    (KERN_PROC_VMMAP requires elevated privileges)\n",
-                    pid, strerror(errno));
+            fprintf(stderr, "[-] Permission denied for PID %d: %s\n    (KERN_PROC_VMMAP requires elevated privileges)\n", pid, strerror(errno));
         } else {
             fprintf(stderr, "[-] Kernel error for PID %d: %s\n", pid, strerror(errno));
         }
@@ -127,12 +123,9 @@ void audit_process_memory(int pid) {
     printf("\n[+] W^X Memory Scan for PID %d\n", pid);
     printf("    %-18s %-18s %-10s\n", "START ADDR", "END ADDR", "PROT");
 
-    char *ptr = (char *)vme;
-    char *end = (char *)vme + size;
-    while (ptr < end) {
-        struct kinfo_vmentry *entry = (struct kinfo_vmentry *)ptr;
-        if (entry->kve_structsize == 0) break;
-        ptr += entry->kve_structsize;
+    int nentries = size / sizeof(struct kinfo_vmentry);
+    for (int i = 0; i < nentries; i++) {
+        struct kinfo_vmentry *entry = &vme[i];
 
         if (entry->kve_start == 0 && entry->kve_end == 0) continue;
         region_count++;
@@ -158,8 +151,7 @@ void audit_process_memory(int pid) {
         }
     }
 
-    printf("\n    [+] Scan complete: %d region(s) mapped, ",
-           region_count);
+    printf("\n    [+] Scan complete: %d region(s) mapped, ", region_count);
     if (wx_count > 0)
         printf("\033[31m%d W+X violation(s) found\033[0m.\n", wx_count);
     else
