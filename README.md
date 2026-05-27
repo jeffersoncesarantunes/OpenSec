@@ -164,13 +164,13 @@ doas ./pmv --scan-wx 20033
 
 ## ● Project in Action
 
-![System Scan](./Imagens/pmv1.png)
+![System Scan](./Imagens/pmv-runtime-scan-v2.png)
 *1 - Interactive runtime state scan displaying the live process table and real-time security scoring.*
 
-![Granular PID Filter](./Imagens/pmv2.png)
+![Granular PID Filter](./Imagens/pmv-pid-filter-v2.png)
 *2 - Granular process filtering using the `--pid` flag, isolating target subtrees and dynamically recalculating scope-specific metrics.*
 
-![Automation and Diffs](./Imagens/pmv3.png)
+![Automation and Diffs](./Imagens/pmv-diff-audit-v2.png)
 *3 - Forensic automation workflow: quiet mode execution (`--quiet`) for data dumping and differential audit (`--diff`) against historical snapshots.*
 
 ---
