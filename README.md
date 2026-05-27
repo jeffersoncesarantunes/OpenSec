@@ -95,7 +95,7 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 | ≤ 0 | Red | No mitigations detected |
 
 ---
-
+<a name="limitations"></a>
 ## ● System Behavior & Constraints
 
 When executing PMV on a clean, default OpenBSD installation, specific security warnings or notices may appear. These are expected behaviors driven by OpenBSD's defensive design philosophy:
