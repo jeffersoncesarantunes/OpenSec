@@ -11,7 +11,7 @@ $(TARGET): $(SRC)
 	@$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
 
 install: all
-	install -m 4755 -o root -g wheel $(TARGET) /usr/local/bin/pmv
+	install -m 755 -o root -g wheel $(TARGET) /usr/local/bin/pmv
 
 clean:
 	@rm -f $(TARGET)

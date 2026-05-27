@@ -48,7 +48,7 @@ ProcessInfo* get_all_processes(int *count) {
     for (int i = 0; i < nprocs; i++) {
         list[i].pid = kp[i].p_pid;
         list[i].ppid = kp[i].p_ppid;
-        strncpy(list[i].name, kp[i].p_comm, sizeof(list[i].name));
+        strlcpy(list[i].name, kp[i].p_comm, sizeof(list[i].name));
         list[i].has_pledge = (kp[i].p_psflags & PS_PLEDGE) ? 1 : 0;
         list[i].has_unveil = (kp[i].p_psflags & PS_UNVEIL) ? 1 : 0;
         list[i].wxneeded = (kp[i].p_psflags & PS_WXNEEDED) ? 1 : 0;
@@ -59,7 +59,7 @@ ProcessInfo* get_all_processes(int *count) {
         list[i].ppname[0] = '\0';
         for (int j = 0; j < nprocs; j++) {
             if (list[j].pid == list[i].ppid) {
-                strncpy(list[i].ppname, list[j].name, sizeof(list[i].ppname));
+                strlcpy(list[i].ppname, list[j].name, sizeof(list[i].ppname));
                 break;
             }
         }

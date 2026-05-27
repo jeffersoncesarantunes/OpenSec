@@ -195,6 +195,10 @@ PMV is designed for safe forensic usage:
 * BSD make
 * doas or root privileges
 
+### Privilege Model
+
+PMV requires access to kernel memory via `libkvm(3)`, which demands elevated privileges. The recommended execution method is `doas` — `make install` installs the binary **without setuid root** (`-m 755`). This follows OpenBSD's security philosophy of explicit privilege elevation rather than implicit setuid escalation. If you prefer a setuid installation, adjust the mode manually after install.
+
 ---
 
 ## ● Repository Structure

@@ -1,84 +1,19 @@
-bin/
-obj/
-build/
-*.o
-*.a
-*.so
-
+# Binary
 pmv
 
+# Object files
+*.o
+
+# Runtime artifacts
 output.json
 output.csv
-baseline.json
-ktrace.out
+.pmv_snapshot
 
+# Editor temporaries
 *~
 *.swp
 *.bak
 *.tmp
 
-.env
-.env.local
-.env.*.local
-.env.production
-.env.development
-.env.staging
-.env.test
-
-*.pem
-*.key
-*.p12
-*.pfx
-*.crt
-*.cer
-*.jks
-*.keystore
-*.ovpn
-secrets.yml
-secrets.yaml
-credentials.json
-service-account.json
-firebase.json
-.npmrc
-.pypirc
-.netrc
-
-id_rsa
-id_ed25519
-authorized_keys
-known_hosts
-.ssh/
-.gnupg/
-
-.vscode/
-.idea/
-
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-.history
-.bash_history
-.zsh_history
-
-reports/
-report.csv
-report.json
-
-*.sql
-*.db
-*.sqlite
-*.mdb
-backup.sql
-dump.sql
-database.sql
-
-.terraform/
-terraform.tfstate
-terraform.tfvars
-.kube/
-.aws/
-.docker/config.json
-
-*.core
+# Sisyphus workspace
 .sisyphus/
