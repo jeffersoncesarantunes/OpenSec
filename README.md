@@ -95,7 +95,7 @@ Each process receives a score from **-2 to 6** based on kernel-reported mitigati
 | ≤ 0 | Red | No mitigations detected |
 
 ---
-<a name="limitations"></a>
+
 ## ● System Behavior & Constraints
 
 When executing PMV on a clean, default OpenBSD installation, specific security warnings or notices may appear. These are expected behaviors driven by OpenBSD's defensive design philosophy:
@@ -113,7 +113,7 @@ When executing PMV on a clean, default OpenBSD installation, specific security w
 doas sysctl kern.allowkmem=1
 ```
 
-### 2. Mitigation Policy Depth Note
+### 2. Mitigation Policy Depth Note <span id="limitations"></span>
 
 ```text
 [!] PLEDGE/UNVEIL shows PRESENCE only — kernel does not expose policy depth.
